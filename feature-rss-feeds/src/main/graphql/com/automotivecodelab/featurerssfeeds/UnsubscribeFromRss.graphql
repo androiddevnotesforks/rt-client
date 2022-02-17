@@ -1,0 +1,3 @@
+mutation UnsubscribeFromRss($threadId: String!, $token: String!) {
+    unsubscribeFromRss(threadId: $threadId, token: $token)
+}

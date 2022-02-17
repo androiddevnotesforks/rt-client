@@ -1,0 +1,46 @@
+type Torrent {
+    id: String!
+    category: String!
+    title: String!
+    author: String!
+    size: Float!
+    seeds: Int!
+    leeches: Int!
+    downloads: Int!
+    host: String!
+    registered: Float!
+    formattedSize: String!
+    url: String!
+    state: String!
+}
+
+type SearchResult {
+    torrents: [Torrent!]!
+    size: Int!
+}
+
+type RssChannel {
+    title: String!
+    threadId: String!
+    entries: [RssChannelEntry!]
+}
+
+type RssChannelEntry {
+    title: String!
+    link: String!
+    updated: String!
+    author: String!
+    id: String!
+}
+
+type Query {
+    search(query: String!, sort: String!, order: String!, startIndex: Int!, endIndex: Int!): SearchResult!
+    magnetLink(id: String!): String!
+    getRss(threadId: String!): RssChannel!
+    getSearchSuggestions(query: String!): [String!]!
+}
+
+type Mutation {
+    subscribeToRss(threadId: String!, token: String!): String!
+    unsubscribeFromRss(threadId: String!, token: String!): String!
+}

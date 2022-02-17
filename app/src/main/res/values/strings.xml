@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">RT Client</string>
+    <string name="search">Search</string>
+    <string name="threads">Threads</string>
+    <string name="notification_channel_name">New topics</string>
+    <string name="notification_channel_description">Notifications on new topic</string>
+</resources>

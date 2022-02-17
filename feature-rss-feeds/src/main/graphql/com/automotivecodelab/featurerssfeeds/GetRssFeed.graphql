@@ -1,0 +1,13 @@
+query GetRssFeed($id: String!) {
+    getRss(threadId: $id) {
+        title
+        threadId
+        entries {
+            title
+            link
+            updated
+            author
+            id
+        }
+    }
+}

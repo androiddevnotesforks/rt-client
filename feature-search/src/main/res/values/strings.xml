@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="type_to_start_searching">Type to start searching</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="search">Search</string>
+    <string name="registered">Registered</string>
+    <string name="title">Title</string>
+    <string name="downloads">Downloads</string>
+    <string name="size">Size</string>
+    <string name="last_message">Last message</string>
+    <string name="seeds">Seeds</string>
+    <string name="leeches">Leeches</string>
+</resources>

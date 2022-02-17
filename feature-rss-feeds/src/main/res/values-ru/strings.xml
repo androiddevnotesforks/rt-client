@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_message">Что-то пошло не так</string>
+    <string name="threads">Форумы</string>
+    <string name="add">Добавить</string>
+    <string name="thread_url">Новый форум</string>
+    <string name="subscribed">Вы подписались на push-уведомления о новых раздачах с форума
+        %1$s</string>
+    <string name="unsubscribed">Вы отписались от форума %1$s</string>
+    <string name="add_thread_hint">Добавьте прямую ссылку на форум, либо воспользуйтесь
+        поиском и со страницы раздачи перейдите по ссылке. Форум будет сохранен в вашем списке
+    </string>
+</resources>

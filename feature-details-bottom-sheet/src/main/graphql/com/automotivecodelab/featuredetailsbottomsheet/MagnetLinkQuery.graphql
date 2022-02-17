@@ -1,0 +1,3 @@
+query MagnetLinkQuery($id: String!) {
+    magnetLink(id: $id)
+}

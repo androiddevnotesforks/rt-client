@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="registered">Добавлен</string>
+    <string name="title">Название</string>
+    <string name="downloads">Загрузки</string>
+    <string name="size">Размер</string>
+    <string name="last_message">Последнее сообщение</string>
+    <string name="seeds">Сиды</string>
+    <string name="leeches">Личи</string>
+    <string name="please_update_app">Пожалуйста, обновите приложение</string>
+    <string name="state">Состояние</string>
+    <string name="author">Автор</string>
+    <string name="open_in_browser">Открыть в браузере</string>
+</resources>

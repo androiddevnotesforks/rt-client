@@ -1,0 +1,21 @@
+query SearchQuery(
+    $query: String!, $sort: String!, $order: String!, $startIndex: Int!, $endIndex: Int!) {
+    search(
+        query: $query, sort: $sort, order: $order, startIndex: $startIndex, endIndex: $endIndex) {
+        torrents {
+            id
+            title
+            category
+            author
+            size
+            seeds
+            leeches
+            downloads
+            host
+            registered
+            formattedSize
+            url
+            state
+        }
+    }
+}

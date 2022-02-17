@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_connection">Отсутствует интернет-соединение</string>
+    <string name="error_message">Что-то пошло не так</string>
+</resources>

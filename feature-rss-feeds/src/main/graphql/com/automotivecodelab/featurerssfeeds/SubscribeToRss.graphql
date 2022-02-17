@@ -1,0 +1,3 @@
+mutation SubscribeToRss($threadId: String!, $token: String!) {
+    subscribeToRss(threadId: $threadId, token: $token)
+}
