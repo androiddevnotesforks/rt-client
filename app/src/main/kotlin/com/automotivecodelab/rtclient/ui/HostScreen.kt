@@ -2,11 +2,8 @@ package com.automotivecodelab.rtclient.ui
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -218,11 +215,20 @@ fun HostScreen(
                                 uriPattern = "${Screen.URI}/${Screen.FeedEntries.routeId}"
                             }
                         ),
-                        enterTransition = { _, _ ->
-                            slideIntoContainer(AnimatedContentScope.SlideDirection.Left)
+                        enterTransition = { initial, _ ->
+                            when (initial.destination.route) {
+                                Screen.Feeds.routeId ->
+                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Left)
+                                else -> fadeIn()
+                            }
+
                         },
-                        exitTransition = { _, _ ->
-                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Right)
+                        exitTransition = { _, target ->
+                            when (target.destination.route) {
+                                Screen.Feeds.routeId ->
+                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Right)
+                                else -> fadeOut()
+                            }
                         },
 
                     ) { backStackEntry ->
