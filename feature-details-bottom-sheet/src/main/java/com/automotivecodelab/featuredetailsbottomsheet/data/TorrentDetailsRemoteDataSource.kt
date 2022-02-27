@@ -37,11 +37,15 @@ internal class TorrentDetailsRemoteDataSourceImpl @Inject constructor(
     }
 
     override fun downloadTorrentFile(torrentId: String, title: String) {
-        val filename = "${title
-            .replace("/", " ")
-            .replace("   ", " ")
-            .take(120)
-        }.torrent"
+        val forbiddenCharacters = """/\:*?"<>|"""
+        var filename = title.take(120)
+        forbiddenCharacters.forEach { char ->
+            filename = filename.replace(char.toString(), " ")
+        }
+        while (filename.contains("  ")) {
+            filename = filename.replace("  ", " ")
+        }
+        filename = "${filename}.torrent"
         val request = DownloadManager.Request(
             Uri.parse("${serverUrl}torrent/file?id=$torrentId")
         )
