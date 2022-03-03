@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.activityCompose)
     implementation(libs.accompanistInsets)
     implementation(libs.accompanistPlaceholder)
+    implementation(libs.accompanistPermissions)
     // ===dagger===
     implementation(libs.dagger)
     kapt(libs.daggerKapt)

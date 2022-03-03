@@ -43,6 +43,7 @@ accompanistSystemUiController = { module = "com.google.accompanist:accompanist-s
 accompanistPlaceholder = { module = "com.google.accompanist:accompanist-placeholder", version.ref = "accompanist" }
 accompanistNavigationAnimation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.8.1"
+accompanistPermissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
 [bundles]
 android = ["androidCore", "appcompat", "lifecycle", "material", "viewmodel"]

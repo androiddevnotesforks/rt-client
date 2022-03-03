@@ -13,7 +13,7 @@ import javax.inject.Named
 internal interface TorrentDetailsRemoteDataSource {
     suspend fun getTorrentDescription(torrentId: String, sduiVersion: Int): TorrentDescription
     suspend fun getMagnetLink(torrentId: String): String
-    fun downloadTorrentFile(torrentId: String, title: String)
+    fun downloadTorrentFile(torrentId: String, title: String): Result<Unit>
 }
 
 internal class TorrentDetailsRemoteDataSourceImpl @Inject constructor(
@@ -36,7 +36,7 @@ internal class TorrentDetailsRemoteDataSourceImpl @Inject constructor(
         return response.dataAssertNoErrors.magnetLink
     }
 
-    override fun downloadTorrentFile(torrentId: String, title: String) {
+    override fun downloadTorrentFile(torrentId: String, title: String): Result<Unit> {
         val forbiddenCharacters = """/\:*?"<>|"""
         var filename = title.take(120)
         forbiddenCharacters.forEach { char ->
@@ -57,6 +57,13 @@ internal class TorrentDetailsRemoteDataSourceImpl @Inject constructor(
                 )
                 setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
             }
-        downloadManager.enqueue(request)
+        // on some devices (most of them runs with android 5, 6) download manager do not works
+        // without WRITE_EXTERNAL_STORAGE permission
+        return try {
+            downloadManager.enqueue(request)
+            Result.success(Unit)
+        } catch (e: SecurityException) {
+            Result.failure(e)
+        }
     }
 }

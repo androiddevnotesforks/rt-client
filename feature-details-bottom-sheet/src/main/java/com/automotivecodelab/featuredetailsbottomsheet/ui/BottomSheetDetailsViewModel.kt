@@ -39,6 +39,8 @@ abstract class BottomSheetDetailsViewModel : ViewModel() {
     internal var isMagnetLinkLoading by mutableStateOf(false)
         private set
 
+    internal var requestFilesystemPermissionEvent by mutableStateOf<Event<Unit>?>(null)
+
     @ExperimentalMaterialApi
     internal var modalBottomSheetState = ModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
@@ -109,5 +111,12 @@ abstract class BottomSheetDetailsViewModel : ViewModel() {
 
     internal fun getTorrentFile(torrentId: String, title: String) {
         getTorrentFileUseCase(torrentId, title)
+            .onFailure { t ->
+                when (t) {
+                    is SecurityException -> {
+                        requestFilesystemPermissionEvent = Event(Unit)
+                    }
+                }
+            }
     }
 }

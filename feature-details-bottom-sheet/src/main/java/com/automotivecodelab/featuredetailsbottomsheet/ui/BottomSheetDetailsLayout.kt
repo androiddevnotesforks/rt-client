@@ -9,8 +9,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.automotivecodelab.coreui.ui.theme.DefaultCornerRadius
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPermissionsApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun BottomSheetDetailsLayout(
@@ -19,7 +22,6 @@ fun BottomSheetDetailsLayout(
     isDarkMode: Boolean,
     screenContent: @Composable () -> Unit
 ) {
-
     viewModel.magnetLinkEvent?.let { event ->
         if (!event.hasBeenHandled) {
             val sendIntent = Intent().apply {
@@ -46,6 +48,14 @@ fun BottomSheetDetailsLayout(
         }
     }
 
+    viewModel.requestFilesystemPermissionEvent?.let { event ->
+        if (!event.hasBeenHandled) {
+            event.getContent()
+            rememberPermissionState(permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .launchPermissionRequest()
+        }
+    }
+
     ModalBottomSheetLayout(
         sheetContent = {
             TorrentDetails(
@@ -59,7 +69,7 @@ fun BottomSheetDetailsLayout(
             topEnd = DefaultCornerRadius
         ),
         sheetBackgroundColor = MaterialTheme.colors.background,
-        sheetElevation = if (isDarkMode) 0.dp else ModalBottomSheetDefaults.Elevation
+        sheetElevation = if (isDarkMode) 0.dp else ModalBottomSheetDefaults.Elevation,
     ) {
         screenContent()
     }

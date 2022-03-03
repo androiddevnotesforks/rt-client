@@ -18,7 +18,7 @@ internal class TorrentDetailsRepositoryImpl @Inject constructor(
         return runCatching { remoteDataSource.getMagnetLink(torrentId) }
     }
 
-    override fun downloadTorrentFile(torrentId: String, title: String) {
-        remoteDataSource.downloadTorrentFile(torrentId, title)
+    override fun downloadTorrentFile(torrentId: String, title: String): Result<Unit> {
+        return remoteDataSource.downloadTorrentFile(torrentId, title)
     }
 }
