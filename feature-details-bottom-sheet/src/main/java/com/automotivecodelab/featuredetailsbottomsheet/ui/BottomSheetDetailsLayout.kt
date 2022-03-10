@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -51,8 +52,11 @@ fun BottomSheetDetailsLayout(
     viewModel.requestFilesystemPermissionEvent?.let { event ->
         if (!event.hasBeenHandled) {
             event.getContent()
-            rememberPermissionState(permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .launchPermissionRequest()
+            val permissionState = rememberPermissionState(
+                permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            LaunchedEffect(key1 = true, block = {
+                permissionState.launchPermissionRequest()
+            })
         }
     }
 

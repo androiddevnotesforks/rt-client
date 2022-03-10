@@ -25,14 +25,15 @@ class NetworkStatusListener(context: Context) {
                             isNetworkAvailable = false
                             super.onLost(network)
                         }
-                        // because onAvailable is called when adguard local vpn is on without internet
+                        // because onAvailable is called when adguard local vpn is on without
+                        // internet
                         override fun onCapabilitiesChanged(
                             network: Network,
                             networkCapabilities: NetworkCapabilities
                         ) {
                             isNetworkAvailable =
                                 networkCapabilities
-                                .hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                                    .hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                                 networkCapabilities
                                     .hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                                 networkCapabilities
@@ -45,7 +46,8 @@ class NetworkStatusListener(context: Context) {
                 isNetworkAvailable = activeNetwork?.isConnectedOrConnecting == true
             }
         } catch (t: Throwable) {
-            isNetworkAvailable = false
+            // delegating error handling to retrofit and graphql clients
+            isNetworkAvailable = true
         }
     }
 }

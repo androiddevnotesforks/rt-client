@@ -11,8 +11,8 @@ configure<BaseExtension> {
     defaultConfig {
         minSdk = 21
         targetSdk = 31
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

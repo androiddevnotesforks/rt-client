@@ -66,8 +66,7 @@ class NetworkModule {
                 request: ApolloRequest<D>,
                 chain: ApolloInterceptorChain
             ): Flow<ApolloResponse<D>> {
-                if (!networkStatusListener.isNetworkAvailable)
-                    throw NoInternetConnectionException()
+                if (!networkStatusListener.isNetworkAvailable) throw NoInternetConnectionException()
                 return chain.proceed(request)
             }
         })
