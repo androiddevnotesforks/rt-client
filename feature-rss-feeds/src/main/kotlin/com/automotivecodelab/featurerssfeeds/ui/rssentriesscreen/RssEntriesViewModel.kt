@@ -4,22 +4,23 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotivecodelab.coreui.ui.Event
-import com.automotivecodelab.featuredetailsbottomsheet.ui.BottomSheetDetailsViewModel
 import com.automotivecodelab.featurerssfeeds.di.RssFeedsDiConstants
 import com.automotivecodelab.featurerssfeeds.domain.GetRssChannelUseCase
 import com.automotivecodelab.featurerssfeeds.domain.models.RssChannelEntry
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @ExperimentalMaterialApi
 class RssEntriesViewModel @AssistedInject constructor(
     @Assisted(RssFeedsDiConstants.THREAD_ID) threadId: String,
     @Assisted(RssFeedsDiConstants.TORRENT_ID) torrentId: String?,
     private val getRssChannelUseCase: GetRssChannelUseCase
-) : BottomSheetDetailsViewModel() {
+) : ViewModel() {
 
     val entries = mutableListOf<RssChannelEntry>()
 
@@ -31,6 +32,8 @@ class RssEntriesViewModel @AssistedInject constructor(
 
     var closeScreenEvent by mutableStateOf<Event<Unit>?>(null)
         private set
+
+    var openDetailsEvent by mutableStateOf<Event<RssChannelEntry>?>(null)
 
     init {
         viewModelScope.launch {
@@ -49,13 +52,7 @@ class RssEntriesViewModel @AssistedInject constructor(
                             rssChannelEntry.id == torrentId
                         }
                         if (entryToOpen != null) {
-                            openDetails(
-                                torrentId = entryToOpen.id,
-                                category = null,
-                                author = entryToOpen.author,
-                                title = entryToOpen.title,
-                                url = entryToOpen.link
-                            )
+                            openDetailsEvent = Event(entryToOpen)
                         } else {
                             error = Event(IndexOutOfBoundsException())
                         }
@@ -63,9 +60,5 @@ class RssEntriesViewModel @AssistedInject constructor(
                 }
             isLoading = false
         }
-    }
-
-    override fun setError(t: Throwable) {
-        error = Event(t)
     }
 }

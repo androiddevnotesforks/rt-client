@@ -13,11 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.automotivecodelab.coreui.ui.ShowErrorSnackbar
 import com.automotivecodelab.coreui.ui.SnackbarWithInsets
 import com.automotivecodelab.coreui.ui.injectViewModel
-import com.automotivecodelab.featuredetailsbottomsheet.di.DaggerDetailsComponent
-import com.automotivecodelab.featuredetailsbottomsheet.di.DetailsComponentDeps
 import com.automotivecodelab.featurerssfeeds.R
 import com.automotivecodelab.featurerssfeeds.di.DaggerRssFeedsComponent
 import com.automotivecodelab.featurerssfeeds.di.RssFeedsDeps
@@ -31,16 +30,10 @@ fun RssFeedsScreen(
     onMenuItemClick: () -> Unit,
     navigateToFeedEntriesScreen: (title: String, threadId: String) -> Unit,
     rssFeedsDeps: RssFeedsDeps,
-    detailsComponentDeps: DetailsComponentDeps
 ) {
     val component = remember {
         DaggerRssFeedsComponent.builder()
             .rssFeedsDeps(rssFeedsDeps)
-            .detailsComponent(
-                DaggerDetailsComponent.builder()
-                    .detailsComponentDeps(detailsComponentDeps)
-                    .build()
-            )
             .build()
     }
 

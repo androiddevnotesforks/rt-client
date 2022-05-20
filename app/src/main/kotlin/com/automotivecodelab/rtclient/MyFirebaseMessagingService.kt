@@ -21,11 +21,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    override fun onMessageReceived(p0: RemoteMessage) {
-        val title = p0.data["title"]
-        val feed = p0.data["feed"]!!
-        val torrentId = p0.data["id"]!!
-        val threadId = p0.data["threadId"]!!
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        val title = remoteMessage.data["title"]
+        val feed = remoteMessage.data["feed"]!!
+        val torrentId = remoteMessage.data["id"]!!
+        val threadId = remoteMessage.data["threadId"]!!
 
         val deepLinkIntent = Intent(
             Intent.ACTION_VIEW,
@@ -46,9 +46,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 this, uniqueId, deepLinkIntent, PendingIntent.FLAG_IMMUTABLE
             )
         } else {
-            PendingIntent.getActivity(
-                this, uniqueId, deepLinkIntent, 0
-            )
+            PendingIntent.getActivity(this, uniqueId, deepLinkIntent, 0)
         }
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_notif)

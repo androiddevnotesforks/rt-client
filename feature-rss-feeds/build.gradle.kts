@@ -22,7 +22,6 @@ dependencies {
 
     implementation(libs.bundles.android)
     implementation(projects.coreUi)
-    implementation(projects.featureDetailsBottomSheet)
     implementation(projects.common)
     implementation(libs.composeUi)
     implementation(libs.composeMaterial)

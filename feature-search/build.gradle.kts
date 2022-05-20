@@ -22,7 +22,6 @@ dependencies {
 
     implementation(libs.bundles.android)
     implementation(projects.coreUi)
-    implementation(projects.featureDetailsBottomSheet)
     implementation(projects.common)
     implementation(libs.composeUi)
     implementation(libs.composeMaterial)
@@ -36,7 +35,6 @@ dependencies {
     implementation(libs.pagingCompose)
     implementation(libs.timber)
     implementation(libs.activityCompose)
-    // implementation(libs.bundles.accompanist)
     implementation(libs.accompanistInsets)
     implementation(libs.accompanistSystemUiController)
 

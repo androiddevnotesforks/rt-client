@@ -2,7 +2,7 @@ package com.automotivecodelab.rtclient.di
 
 import android.content.Context
 import android.content.res.Resources
-import com.automotivecodelab.featuredetailsbottomsheet.di.TorrentDetailsDiConstants
+import com.automotivecodelab.featuredetails.di.TorrentDetailsDiConstants
 import com.automotivecodelab.rtclient.R
 import dagger.Module
 import dagger.Provides

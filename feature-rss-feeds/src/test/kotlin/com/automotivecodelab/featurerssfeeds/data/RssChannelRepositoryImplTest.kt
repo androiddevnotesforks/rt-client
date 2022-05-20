@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.*
 
-internal class RssChannelRepositoryImplTest {
+class RssChannelRepositoryImplTest {
 
     @Before
     fun setUp() {
@@ -46,7 +46,7 @@ internal class RssChannelRepositoryImplTest {
     }
 }
 
-internal class LocalDataSourceMock(private val isRssChannelExists: Boolean)
+class LocalDataSourceMock(private val isRssChannelExists: Boolean)
     : RssChannelLocalDataSource {
     override suspend fun addRssChannel(rssChannel: RssChannelDatabaseModel) {
 
@@ -77,7 +77,7 @@ internal class LocalDataSourceMock(private val isRssChannelExists: Boolean)
     }
 }
 
-internal class RemoteDataSourceMock: RssChannelRemoteDataSource {
+class RemoteDataSourceMock: RssChannelRemoteDataSource {
     companion object {
         const val RSS_CHANNEL_ID = "networkChannelId"
     }

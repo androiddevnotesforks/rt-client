@@ -2,7 +2,6 @@ package com.automotivecodelab.featuresearch.di
 
 import com.apollographql.apollo3.ApolloClient
 import com.automotivecodelab.common.FeatureScoped
-import com.automotivecodelab.featuredetailsbottomsheet.di.DetailsComponent
 import com.automotivecodelab.featuresearch.data.TorrentSearchRemoteDataSource
 import com.automotivecodelab.featuresearch.data.TorrentSearchResultRepositoryImpl
 import com.automotivecodelab.featuresearch.data.TorrentsRemoteDataSourceImpl
@@ -14,7 +13,7 @@ import dagger.Module
 
 @FeatureScoped
 @Component(
-    dependencies = [DetailsComponent::class, SearchComponentDeps::class],
+    dependencies = [SearchComponentDeps::class],
     modules = [SearchModule::class]
 )
 interface SearchComponent {

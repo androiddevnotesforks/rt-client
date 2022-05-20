@@ -7,9 +7,10 @@ import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
 import java.io.IOException
+import javax.inject.Inject
 
 @Suppress("DEPRECATION")
-class NetworkStatusListener(context: Context) {
+class NetworkStatusListener @Inject constructor(context: Context) {
 
     var isNetworkAvailable = false
         private set

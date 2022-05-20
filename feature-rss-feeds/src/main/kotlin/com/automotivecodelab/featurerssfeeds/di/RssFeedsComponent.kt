@@ -4,7 +4,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import com.apollographql.apollo3.ApolloClient
 import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.corenetwork.data.FirebaseRegistrationTokenHolder
-import com.automotivecodelab.featuredetailsbottomsheet.di.DetailsComponent
 import com.automotivecodelab.featurerssfeeds.data.*
 import com.automotivecodelab.featurerssfeeds.domain.RssChannelRepository
 import com.automotivecodelab.featurerssfeeds.ui.rssentriesscreen.RssEntriesViewModel
@@ -17,7 +16,7 @@ import dagger.assisted.AssistedFactory
 
 @FeatureScoped
 @Component(
-    dependencies = [RssFeedsDeps::class, DetailsComponent::class],
+    dependencies = [RssFeedsDeps::class],
     modules = [RssFeedsModule::class]
 )
 interface RssFeedsComponent {

@@ -19,25 +19,25 @@ data class RssChannelDatabaseModel(
 @Dao
 interface RssChannelDao {
     @Query("SELECT * FROM rsschanneldatabasemodel")
-    fun getAll(): List<RssChannelDatabaseModel>
+    suspend fun getAll(): List<RssChannelDatabaseModel>
 
     @Query("SELECT * FROM rsschanneldatabasemodel")
     fun observeAll(): Flow<List<RssChannelDatabaseModel>>
-
-    @Query("SELECT * FROM rsschanneldatabasemodel WHERE threadId IN (:threadId)")
-    fun getByThreadId(threadId: String): RssChannelDatabaseModel
+    //todo
+    @Query("SELECT * FROM rsschanneldatabasemodel WHERE threadId = :threadId")
+    suspend fun getByThreadId(threadId: String): RssChannelDatabaseModel
 
     @Insert
-    fun insertAll(vararg rssChannelDatabaseModel: RssChannelDatabaseModel)
+    suspend fun insertAll(vararg rssChannelDatabaseModel: RssChannelDatabaseModel)
 
     @Delete
-    fun delete(rssChannelDatabaseModel: RssChannelDatabaseModel)
+    suspend fun delete(rssChannelDatabaseModel: RssChannelDatabaseModel)
 
     @Update
-    fun update(rssChannelDatabaseModel: RssChannelDatabaseModel): Int
+    suspend fun update(rssChannelDatabaseModel: RssChannelDatabaseModel): Int
 
     @Query("SELECT EXISTS(SELECT * FROM rsschanneldatabasemodel WHERE threadId = :threadId)")
-    fun isFeedExists(threadId: String): Boolean
+    suspend fun isFeedExists(threadId: String): Boolean
 }
 
 fun RssChannel.toDatabaseModel() = RssChannelDatabaseModel(

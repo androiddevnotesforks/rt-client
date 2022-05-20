@@ -23,15 +23,13 @@ class RssChannelRepositoryImpl @Inject constructor(
     @DelicateCoroutinesApi
     override suspend fun deleteRssChannel(rssChannel: RssChannel) {
         GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                localDataSource.deleteRssChannel(rssChannel.toDatabaseModel())
-            }
+            localDataSource.deleteRssChannel(rssChannel.toDatabaseModel())
         }
     }
 
     override suspend fun getRssChannel(threadId: String): Result<RssChannel> {
         return runCatching {
-            withContext(Dispatchers.IO) {
+            coroutineScope {
                 val networkRssChannelDef = async { remoteDataSource.getRssChannel(threadId) }
                 val isThreadAlreadyAddedLocallyDef = async {
                     localDataSource.isRssChannelExists(threadId)
@@ -39,8 +37,7 @@ class RssChannelRepositoryImpl @Inject constructor(
                 val networkRssChannel = networkRssChannelDef.await()
                 val isThreadAlreadyAddedLocally = isThreadAlreadyAddedLocallyDef.await()
                 if (isThreadAlreadyAddedLocally) {
-                    val localRssChannel = localDataSource
-                        .getRssChannelByThreadId(threadId)
+                    val localRssChannel = localDataSource.getRssChannelByThreadId(threadId)
                     localRssChannel.toDomainModel(networkRssChannel.entries)
                 } else {
                     val domainModel = networkRssChannel.toDomainModel(isSubscribed = false)
@@ -52,40 +49,32 @@ class RssChannelRepositoryImpl @Inject constructor(
     }
 
     @DelicateCoroutinesApi
-    override suspend fun subscribeToRssChannel(rssChannel: RssChannel): Result<Unit> {
-        return runCatching {
-            GlobalScope.launch {
-                withContext(Dispatchers.IO) {
+    override suspend fun subscribeToRssChannel(rssChannel: RssChannel) {
+        GlobalScope.launch {
+            localDataSource.updateRssChannel(
+                rssChannel.copy(isSubscribed = true).toDatabaseModel()
+            )
+            remoteDataSource.subscribeToRssChannel(rssChannel.threadId)
+                .onFailure {
                     localDataSource.updateRssChannel(
-                        rssChannel.copy(isSubscribed = true).toDatabaseModel()
+                        rssChannel.copy(isSubscribed = false).toDatabaseModel()
                     )
-                    remoteDataSource.subscribeToRssChannel(rssChannel.threadId)
-                        .onFailure {
-                            localDataSource.updateRssChannel(
-                                rssChannel.copy(isSubscribed = false).toDatabaseModel()
-                            )
-                        }
                 }
-            }
         }
     }
 
     @DelicateCoroutinesApi
-    override suspend fun unsubscribeFromRssChannel(rssChannel: RssChannel): Result<Unit> {
-        return runCatching {
-            GlobalScope.launch {
-                withContext(Dispatchers.IO) {
+    override suspend fun unsubscribeFromRssChannel(rssChannel: RssChannel) {
+        GlobalScope.launch {
+            localDataSource.updateRssChannel(
+                rssChannel.copy(isSubscribed = false).toDatabaseModel()
+            )
+            remoteDataSource.unsubscribeFromRssChannel(rssChannel.threadId)
+                .onFailure {
                     localDataSource.updateRssChannel(
-                        rssChannel.copy(isSubscribed = false).toDatabaseModel()
+                        rssChannel.copy(isSubscribed = true).toDatabaseModel()
                     )
-                    remoteDataSource.unsubscribeFromRssChannel(rssChannel.threadId)
-                        .onFailure {
-                            localDataSource.updateRssChannel(
-                                rssChannel.copy(isSubscribed = true).toDatabaseModel()
-                            )
-                        }
                 }
-            }
         }
     }
 }

@@ -9,6 +9,7 @@ import timber.log.Timber
 class MyApplication : Application() {
 
     lateinit var appComponent: ApplicationComponent
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -21,5 +22,5 @@ class MyApplication : Application() {
     }
 }
 
-val Context.AppComponent: ApplicationComponent
+val Context.appComponent: ApplicationComponent
     get() = (applicationContext as MyApplication).appComponent

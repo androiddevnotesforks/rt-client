@@ -38,9 +38,37 @@ sealed class Screen(
             }
             return "feed_entries?$THREAD_ID=$threadId&$TITLE=$title".plus(torrentIdParam)
         }
-
         const val THREAD_ID = "thread_id"
         const val TITLE = "title"
         const val TORRENT_ID = "torrent_id"
+    }
+
+    object Favorites : Screen(
+        routeId = "favorites",
+        icon = R.drawable.ic_baseline_star_24,
+        label = R.string.favorites
+    )
+
+    object Details : Screen(
+        routeId = "details?torrent_id={torrent_id}&category={category}&author={author}&" +
+                "title={title}&url={url}",
+        icon = null,
+        label = null
+    ) {
+        fun routeConstructor(
+            torrentId: String,
+            category: String,
+            author: String,
+            title: String,
+            url: String,
+        ) : String {
+            return "details?$TORRENT_ID=$torrentId&$CATEGORY=$category&$AUTHOR=$author&" +
+                    "$TITLE=$title&$URL=$url"
+        }
+        const val TORRENT_ID = "torrent_id"
+        const val CATEGORY = "category"
+        const val AUTHOR = "author"
+        const val TITLE = "title"
+        const val URL = "url"
     }
 }

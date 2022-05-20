@@ -48,8 +48,10 @@ dependencies {
     implementation(projects.featureSearch)
     implementation(projects.coreUi)
     implementation(projects.coreNetwork)
-    implementation(projects.featureDetailsBottomSheet)
+    implementation(projects.featureDetails)
     implementation(projects.common)
+    implementation(projects.featureFavoritesApi)
+    implementation(projects.featureFavoritesImpl)
 
     // ===compose===
     implementation(libs.composeUi)
@@ -64,6 +66,7 @@ dependencies {
     implementation(libs.accompanistSystemUiController)
     implementation(libs.accompanistInsets)
     implementation(libs.accompanistNavigationAnimation)
+    implementation(libs.accompanistNavigation)
 
     // ===test===
     testImplementation(libs.junit)

@@ -1,6 +1,5 @@
 package com.automotivecodelab.rtclient.di
 
-import android.content.Context
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloRequest
 import com.apollographql.apollo3.api.ApolloResponse
@@ -11,8 +10,8 @@ import com.apollographql.apollo3.network.okHttpClient
 import com.automotivecodelab.corenetwork.data.FirebaseRegistrationTokenHolder
 import com.automotivecodelab.corenetwork.data.NetworkStatusListener
 import com.automotivecodelab.corenetwork.data.NoInternetConnectionException
-import com.automotivecodelab.featuredetailsbottomsheet.data.TorrentDetailsServerApi
-import com.automotivecodelab.featuredetailsbottomsheet.di.TorrentDetailsDiConstants
+import com.automotivecodelab.featuredetails.data.TorrentDetailsServerApi
+import com.automotivecodelab.featuredetails.di.TorrentDetailsDiConstants
 import com.automotivecodelab.rtclient.BuildConfig
 import com.automotivecodelab.rtclient.data.FirebaseRegistrationTokenHolderImpl
 import com.automotivecodelab.rtclient.data.ServerApi
@@ -27,12 +26,6 @@ import retrofit2.Retrofit
 
 @Module(includes = [NetworkModule.Bindings::class])
 class NetworkModule {
-    @Singleton
-    @Provides
-    fun provideNetworkStatusListener(context: Context): NetworkStatusListener {
-        return NetworkStatusListener(context)
-    }
-
     @Singleton
     @Provides
     fun provideOkHttpClient(networkStatusListener: NetworkStatusListener) = OkHttpClient.Builder()

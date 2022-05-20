@@ -1,10 +1,10 @@
 package com.automotivecodelab.featuresearch.ui
 
 import androidx.compose.runtime.*
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.automotivecodelab.coreui.ui.Event
-import com.automotivecodelab.featuredetailsbottomsheet.ui.BottomSheetDetailsViewModel
 import com.automotivecodelab.featuresearch.domain.GetSearchSuggestionsUseCase
 import com.automotivecodelab.featuresearch.domain.SearchTorrentsUseCase
 import com.automotivecodelab.featuresearch.domain.models.Order
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.*
 class SearchViewModel @Inject constructor(
     private val searchTorrentsUseCase: SearchTorrentsUseCase,
     private val getSearchSuggestionsUseCase: GetSearchSuggestionsUseCase
-) : BottomSheetDetailsViewModel() {
+) : ViewModel() {
 
     var searchResults by mutableStateOf(emptyFlow<PagingData<TorrentSearchResult>>())
         private set
@@ -77,7 +77,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    override fun setError(t: Throwable) {
+    fun setError(t: Throwable) {
         error = Event(t)
     }
 }

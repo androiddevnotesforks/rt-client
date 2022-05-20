@@ -1,6 +1,7 @@
 package com.automotivecodelab.rtclient.di
 
 import android.content.Context
+import com.automotivecodelab.featurefavoritesimpl.data.FavoritesDao
 import com.automotivecodelab.featurerssfeeds.data.RssChannelDao
 import com.automotivecodelab.rtclient.data.AppDatabase
 import dagger.Module
@@ -19,5 +20,11 @@ class RoomModule {
     @Provides
     fun provideRssChannelDao(db: AppDatabase): RssChannelDao {
         return db.rssChannelDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideFavoritesDao(db: AppDatabase): FavoritesDao {
+        return db.favoritesDao()
     }
 }

@@ -14,7 +14,7 @@ import java.util.*
 @Composable
 fun TorrentCard(
     title: String,
-    updated: Date,
+    updated: Date?,
     author: String,
     category: String?,
     formattedSize: String?,
@@ -63,13 +63,15 @@ fun TorrentCard(
                             style = MaterialTheme.typography.body2
                         )
                     }
-                    Text(
-                        text = updated.formatDate(),
-                        style = MaterialTheme.typography.body2
-                    )
+                    updated?.let {
+                        Text(
+                            text = it.formatDate(),
+                            style = MaterialTheme.typography.body2
+                        )
+                    }
                 }
             }
         }
     }
-    Divider()
+    //Divider()
 }

@@ -3,15 +3,19 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="client.buildSrc" target="11" />
+      <module name="client.buildSrc.main" target="11" />
+      <module name="client.buildSrc.test" target="11" />
       <module name="RT-Client.app" target="11" />
       <module name="rt-client.app" target="11" />
       <module name="RT-Client.core-network" target="11" />
       <module name="rt-client.core-network" target="11" />
       <module name="rt-client.core-ui" target="11" />
       <module name="RT-Client.core-ui" target="11" />
+      <module name="rt-client.feature-details" target="11" />
       <module name="RT-Client.feature-details-bottom-sheet" target="11" />
-      <module name="rt-client.feature-details-bottom-sheet" target="11" />
       <module name="rt-client.feature-details-bottom-sheet-api" target="11" />
+      <module name="rt-client.feature-favorites-api" target="11" />
+      <module name="rt-client.feature-favorites-impl" target="11" />
       <module name="RT-Client.feature-rss-feeds" target="11" />
       <module name="rt-client.feature-rss-feeds" target="11" />
       <module name="RT-Client.feature-search" target="11" />

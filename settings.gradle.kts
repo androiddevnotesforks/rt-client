@@ -9,7 +9,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter() // Warning: this repository is going to shut down soon
     }
 }
 rootProject.name = "rt-client"
@@ -18,7 +17,9 @@ include(
     "feature-rss-feeds",
     "core-ui",
     "core-network",
-    "feature-details-bottom-sheet",
+    "feature-details",
     "feature-search",
-    "common"
+    "common",
+    "feature-favorites-api",
+    "feature-favorites-impl",
 )

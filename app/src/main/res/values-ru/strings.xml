@@ -5,4 +5,5 @@
     <string name="threads">Форумы</string>
     <string name="notification_channel_name">Новые раздачи</string>
     <string name="notification_channel_description">Уведомления о новых раздачах</string>
+    <string name="favorites">Избранное</string>
 </resources>

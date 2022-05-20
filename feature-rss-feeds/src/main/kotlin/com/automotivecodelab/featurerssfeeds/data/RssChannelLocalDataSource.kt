@@ -18,15 +18,11 @@ class RssChannelLocalDataSourceImpl @Inject constructor(
     private val rssChannelDao: RssChannelDao
 ) : RssChannelLocalDataSource {
     override suspend fun addRssChannel(rssChannel: RssChannelDatabaseModel) {
-        withContext(Dispatchers.IO) {
-            rssChannelDao.insertAll(rssChannel)
-        }
+        rssChannelDao.insertAll(rssChannel)
     }
 
     override suspend fun getRssChannelByThreadId(threadId: String): RssChannelDatabaseModel {
-        return withContext(Dispatchers.IO) {
-            rssChannelDao.getByThreadId(threadId)
-        }
+        return rssChannelDao.getByThreadId(threadId)
     }
 
     override fun observeAll(): Flow<List<RssChannelDatabaseModel>> {
@@ -34,20 +30,14 @@ class RssChannelLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun deleteRssChannel(rssChannel: RssChannelDatabaseModel) {
-        withContext(Dispatchers.IO) {
-            rssChannelDao.delete(rssChannel)
-        }
+        rssChannelDao.delete(rssChannel)
     }
 
     override suspend fun updateRssChannel(rssChannel: RssChannelDatabaseModel) {
-        withContext(Dispatchers.IO) {
-            rssChannelDao.update(rssChannel)
-        }
+        rssChannelDao.update(rssChannel)
     }
 
     override suspend fun isRssChannelExists(threadId: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            rssChannelDao.isFeedExists(threadId)
-        }
+        return rssChannelDao.isFeedExists(threadId)
     }
 }

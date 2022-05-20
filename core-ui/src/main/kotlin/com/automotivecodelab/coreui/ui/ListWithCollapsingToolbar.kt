@@ -72,9 +72,12 @@ fun <T> ListWithCollapsingToolbar(
             if (it) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             } else {
+                val statusBarHeightDp = with(LocalDensity.current) {
+                    statusBarHeightPx.toDp()
+                }
                 LazyColumn(
                     modifier = Modifier.nestedScroll(nestedScrollConnection),
-                    contentPadding = PaddingValues(top = toolbarHeight)
+                    contentPadding = PaddingValues(top = toolbarHeight + statusBarHeightDp)
                 ) {
                     items(items) { item ->
                         itemComposable(item)

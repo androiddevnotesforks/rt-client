@@ -4,4 +4,5 @@
     <string name="threads">Threads</string>
     <string name="notification_channel_name">New topics</string>
     <string name="notification_channel_description">Notifications on new topic</string>
+    <string name="favorites">Favorites</string>
 </resources>
