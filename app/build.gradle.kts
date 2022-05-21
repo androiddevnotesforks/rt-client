@@ -30,6 +30,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.get()
     }
+    namespace = "com.automotivecodelab.rtclient"
 }
 
 dependencies {

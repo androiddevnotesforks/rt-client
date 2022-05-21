@@ -23,17 +23,17 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
 
-    private var deepLinkEvent by mutableStateOf<Event<Uri>?>(null)
+    private var deepLinkEvent by mutableStateOf<Event<Intent>?>(null)
 
-    @ExperimentalCoroutinesApi
-    @FlowPreview
-    @ExperimentalAnimationApi
-    @DelicateCoroutinesApi
-    @ExperimentalMaterialApi
-    @ExperimentalComposeUiApi
+    @OptIn(
+        ExperimentalAnimationApi::class, ExperimentalMaterialApi::class,
+        ExperimentalComposeUiApi::class, FlowPreview::class, ExperimentalCoroutinesApi::class,
+        DelicateCoroutinesApi::class
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_RTClient)
         super.onCreate(savedInstanceState)
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null && intent.data != null) {
-            deepLinkEvent = Event(intent.data!!)
+            deepLinkEvent = Event(intent)
         }
     }
 

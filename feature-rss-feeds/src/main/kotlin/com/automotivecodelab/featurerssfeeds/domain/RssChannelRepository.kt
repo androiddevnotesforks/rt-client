@@ -1,6 +1,7 @@
 package com.automotivecodelab.featurerssfeeds.domain
 
 import com.automotivecodelab.featurerssfeeds.domain.models.RssChannel
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 
 interface RssChannelRepository {

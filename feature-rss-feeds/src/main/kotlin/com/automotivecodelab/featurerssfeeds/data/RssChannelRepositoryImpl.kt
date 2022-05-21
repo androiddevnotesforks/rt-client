@@ -20,7 +20,8 @@ class RssChannelRepositoryImpl @Inject constructor(
         }
     }
 
-    @DelicateCoroutinesApi
+
+    @OptIn(DelicateCoroutinesApi::class)
     override suspend fun deleteRssChannel(rssChannel: RssChannel) {
         GlobalScope.launch {
             localDataSource.deleteRssChannel(rssChannel.toDatabaseModel())
@@ -48,7 +49,7 @@ class RssChannelRepositoryImpl @Inject constructor(
         }
     }
 
-    @DelicateCoroutinesApi
+    @OptIn(DelicateCoroutinesApi::class)
     override suspend fun subscribeToRssChannel(rssChannel: RssChannel) {
         GlobalScope.launch {
             localDataSource.updateRssChannel(
@@ -63,7 +64,7 @@ class RssChannelRepositoryImpl @Inject constructor(
         }
     }
 
-    @DelicateCoroutinesApi
+    @OptIn(DelicateCoroutinesApi::class)
     override suspend fun unsubscribeFromRssChannel(rssChannel: RssChannel) {
         GlobalScope.launch {
             localDataSource.updateRssChannel(

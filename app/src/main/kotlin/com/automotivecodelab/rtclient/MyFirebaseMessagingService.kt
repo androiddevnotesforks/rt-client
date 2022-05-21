@@ -37,16 +37,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             this,
             MainActivity::class.java
         )
-        deepLinkIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val uniqueId = Random(System.currentTimeMillis()).nextInt()
 
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.getActivity(
-                this, uniqueId, deepLinkIntent, PendingIntent.FLAG_IMMUTABLE
+                applicationContext, uniqueId, deepLinkIntent, PendingIntent.FLAG_IMMUTABLE
             )
         } else {
-            PendingIntent.getActivity(this, uniqueId, deepLinkIntent, 0)
+            PendingIntent.getActivity(applicationContext, uniqueId, deepLinkIntent, 0)
         }
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_notif)

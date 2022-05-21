@@ -12,7 +12,7 @@ inline fun <reified T : ViewModel> injectViewModel(
     crossinline vmInstanceCreator: () -> T
 ): T = viewModel(
     factory = object : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return vmInstanceCreator() as T
         }
     }

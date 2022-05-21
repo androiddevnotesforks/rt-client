@@ -1,5 +1,6 @@
 package com.automotivecodelab.featuresearch.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -37,6 +38,7 @@ import com.google.accompanist.insets.navigationBarsHeight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 @FlowPreview

@@ -73,8 +73,8 @@ fun NavGraphBuilder.rssFeedsGraph(
     ) {
         composable(
             route = Screen.Feeds.routeId,
-            enterTransition = { initial, _ ->
-                when (initial.destination.route) {
+            enterTransition = {
+                when (initialState.destination.route) {
                     Screen.FeedEntries.routeId ->
                         slideIntoContainer(
                             AnimatedContentScope.SlideDirection.Right
@@ -82,8 +82,8 @@ fun NavGraphBuilder.rssFeedsGraph(
                     else -> EnterTransition.None
                 }
             },
-            exitTransition = { _, target ->
-                when (target.destination.route) {
+            exitTransition = {
+                when (targetState.destination.route) {
                     Screen.FeedEntries.routeId ->
                         slideOutOfContainer(
                             AnimatedContentScope.SlideDirection.Left
@@ -116,8 +116,8 @@ fun NavGraphBuilder.rssFeedsGraph(
                     uriPattern = "${Screen.URI}/${Screen.FeedEntries.routeId}"
                 }
             ),
-            enterTransition = { initial, _ ->
-                when (initial.destination.route) {
+            enterTransition = {
+                when (initialState.destination.route) {
                     Screen.Feeds.routeId ->
                         slideIntoContainer(
                             AnimatedContentScope.SlideDirection.Left
@@ -126,8 +126,8 @@ fun NavGraphBuilder.rssFeedsGraph(
                 }
 
             },
-            exitTransition = { _, target ->
-                when (target.destination.route) {
+            exitTransition = {
+                when (targetState.destination.route) {
                     Screen.Feeds.routeId ->
                         slideOutOfContainer(
                             AnimatedContentScope.SlideDirection.Right

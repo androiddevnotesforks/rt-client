@@ -23,7 +23,7 @@ interface RssChannelDao {
 
     @Query("SELECT * FROM rsschanneldatabasemodel")
     fun observeAll(): Flow<List<RssChannelDatabaseModel>>
-    //todo
+
     @Query("SELECT * FROM rsschanneldatabasemodel WHERE threadId = :threadId")
     suspend fun getByThreadId(threadId: String): RssChannelDatabaseModel
 

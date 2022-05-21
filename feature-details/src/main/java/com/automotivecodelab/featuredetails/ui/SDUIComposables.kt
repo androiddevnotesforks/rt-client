@@ -15,12 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import coil.size.OriginalSize
+import coil.size.Size
 import com.automotivecodelab.coreui.ui.theme.DefaultCornerRadius
 import com.automotivecodelab.coreui.ui.theme.DefaultPadding
 import com.automotivecodelab.coreui.ui.theme.Gray
@@ -65,21 +69,18 @@ fun SDUIImage(image: SDUIImageModel) {
         var isLoading by remember {
             mutableStateOf(true)
         }
-
-        Image(
-            painter = rememberImagePainter(
-                data = image.url,
-                builder = {
-                    size(OriginalSize)
-                    crossfade(true)
-                    listener(
-                        onStart = { isLoading = true },
-                        onCancel = { isLoading = false },
-                        onError = { _, _ -> isLoading = false },
-                        onSuccess = { _, _ -> isLoading = false }
-                    )
-                }
-            ),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(image.url)
+                .size(Size.ORIGINAL)
+                .crossfade(true)
+                .listener(
+                    onStart = { isLoading = true },
+                    onCancel = { isLoading = false },
+                    onError = { _, _ -> isLoading = false },
+                    onSuccess = { _, _ -> isLoading = false }
+                )
+                .build(),
             contentDescription = null,
             modifier = modifier.placeholder(
                 visible = isLoading,
@@ -90,6 +91,7 @@ fun SDUIImage(image: SDUIImageModel) {
                 )
             ),
             contentScale = ContentScale.Crop
+
         )
     }
 }

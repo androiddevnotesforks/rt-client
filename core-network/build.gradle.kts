@@ -17,3 +17,6 @@ dependencies {
     implementation(libs.dagger)
     kapt(libs.daggerKapt)
 }
+android {
+    namespace = "com.automotivecodelab.corenetwork"
+}

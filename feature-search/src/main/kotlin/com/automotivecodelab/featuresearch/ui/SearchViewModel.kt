@@ -28,7 +28,7 @@ class SearchViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     @FlowPreview
     val searchSuggestions = _query
-        .debounce(300)
+        .debounce(200)
         .mapLatest { query ->
             if (query.length < 2) {
                 emptyList()

@@ -1,5 +1,7 @@
 package com.automotivecodelab.rtclient.ui
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
@@ -30,7 +32,9 @@ import com.google.accompanist.navigation.material.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -40,12 +44,13 @@ import kotlinx.coroutines.flow.*
 @ExperimentalComposeUiApi
 @Composable
 fun HostScreen(
-    deepLinkEvent: Event<Uri>?
+    deepLinkEvent: Event<Intent>?
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val modalBottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
     )
     val bottomSheetNavigator = remember(modalBottomSheetState) {
         BottomSheetNavigator(sheetState = modalBottomSheetState)
@@ -58,10 +63,6 @@ fun HostScreen(
             }
         }
         Unit
-    }
-
-    if (deepLinkEvent != null && !deepLinkEvent.hasBeenHandled) {
-        navController.navigate(deepLinkEvent.getContent())
     }
 
     val systemUiController = rememberSystemUiController()
@@ -100,7 +101,7 @@ fun HostScreen(
                 ),
                 drawerContent = {
                     Spacer(modifier = Modifier.statusBarsHeight())
-                    val currentScreenRouteId = navController.currentScreenRouteId().collectAsState(
+                    val currentScreenRouteId by navController.currentScreenRouteId().collectAsState(
                         initial = Screen.Search.routeId
                     )
                     DrawerItem(
@@ -111,10 +112,6 @@ fun HostScreen(
                                 scaffoldState.drawerState.close()
                                 navController.navigate(SEARCH_GRAPH_ROUTE) {
                                     popUpTo(Screen.Search.routeId)
-                                    // todo
-                                    // bug: incorrect navigation through deeplink when savestate = true:
-                                    // no action when click on search button in nav drawer
-                                    // https://stackoverflow.com/questions/68456471/jetpack-compose-bottom-bar-navigation-not-responding-after-deep-linking
                                         {
                                             saveState = true
                                         }
@@ -123,7 +120,7 @@ fun HostScreen(
                                 }
                             }
                         },
-                        isSelected = currentScreenRouteId.value == Screen.Search.routeId
+                        isSelected = currentScreenRouteId == Screen.Search.routeId
                     )
                     DrawerItem(
                         painter = painterResource(id = Screen.Feeds.icon!!),
@@ -141,8 +138,8 @@ fun HostScreen(
                                 }
                             }
                         },
-                        isSelected = currentScreenRouteId.value == Screen.Feeds.routeId ||
-                                currentScreenRouteId.value == Screen.FeedEntries.routeId
+                        isSelected = currentScreenRouteId == Screen.Feeds.routeId ||
+                                currentScreenRouteId == Screen.FeedEntries.routeId
                     )
                     DrawerItem(
                         painter = painterResource(id = Screen.Favorites.icon!!),
@@ -160,7 +157,7 @@ fun HostScreen(
                                 }
                             }
                         },
-                        isSelected = currentScreenRouteId.value == Screen.Favorites.routeId
+                        isSelected = currentScreenRouteId == Screen.Favorites.routeId
 
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -210,6 +207,17 @@ fun HostScreen(
                 }
             }
         }
+    }
+
+    if (deepLinkEvent != null && !deepLinkEvent.hasBeenHandled) {
+        val intent = deepLinkEvent.getContent()
+        // workaround for bug when clicking on notification when app is in foreground causes
+        // activity to recreate. The problem is in intent flag FLAG_ACTIVITY_NEW_TASK, which setted
+        // implicitly somewhere, probably on step of wrapping Intent to PendingIntent. Using
+        // navigate() instead of handleDeepLink() causes much more stranger bug:
+        // https://stackoverflow.com/questions/68456471/jetpack-compose-bottom-bar-navigation-not-responding-after-deep-linking
+        intent.flags = 0
+        navController.handleDeepLink(intent)
     }
 }
 

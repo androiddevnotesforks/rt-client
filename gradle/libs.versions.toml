@@ -1,30 +1,32 @@
 [versions]
-compose = "1.0.3"
-dagger = "2.39.1"
+#for skipHalfExpanded in ModalBottomSheetState
+compose = "1.2.0-beta02"
+dagger = "2.42"
 retrofit = "2.9.0"
+#failed to build project with apollo 3.3.0 "LiveLiterals$QueryKt is defined multiple times"
 apollo = "3.0.0"
-room = "2.3.0"
-accompanist = "0.20.3"
+room = "2.4.2"
+accompanist = "0.23.1"
 
 [libraries]
-androidCore = "androidx.core:core-ktx:1.6.0"
-appcompat = "androidx.appcompat:appcompat:1.3.1"
-material = "com.google.android.material:material:1.4.0"
+androidCore = "androidx.core:core-ktx:1.7.0"
+appcompat = "androidx.appcompat:appcompat:1.4.1"
+material = "com.google.android.material:material:1.6.0"
 composeUi = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 composeMaterial = { module = "androidx.compose.material:material", version.ref = "compose" }
 composeToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
-activityCompose = "androidx.activity:activity-compose:1.4.0-beta01"
+lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+activityCompose = "androidx.activity:activity-compose:1.4.0"
 junit = "junit:junit:4.+"
 junitExt = "androidx.test.ext:junit:1.1.3"
 espresso = "androidx.test.espresso:espresso-core:3.4.0"
 composeTest = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 composeTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 navigationCompose = "androidx.navigation:navigation-compose:2.4.2"
-viewmodelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
+viewmodelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1"
 timber = "com.jakewharton.timber:timber:5.0.1"
 datastore = "androidx.datastore:datastore-preferences:1.0.0"
-paging = "androidx.paging:paging-runtime-ktx:3.1.0"
+paging = "androidx.paging:paging-runtime-ktx:3.1.1"
 pagingCompose = "androidx.paging:paging-compose:1.0.0-alpha14"
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 daggerKapt = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
@@ -32,17 +34,17 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 apollo = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo"}
 coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1"
-coil = "io.coil-kt:coil-compose:1.4.0"
-composeMaterial3 = "androidx.compose.material3:material3:1.0.0-alpha01"
+coil = "io.coil-kt:coil-compose:2.1.0"
+composeMaterial3 = "androidx.compose.material3:material3:1.0.0-alpha12"
 room = { module = "androidx.room:room-runtime", version.ref = "room" }
 roomKapt = { module = "androidx.room:room-compiler", version.ref = "room" }
 roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
-viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
 accompanistInsets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanistSystemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanistPlaceholder = { module = "com.google.accompanist:accompanist-placeholder", version.ref = "accompanist" }
 accompanistNavigationAnimation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
-leakCanary = "com.squareup.leakcanary:leakcanary-android:2.8.1"
+leakCanary = "com.squareup.leakcanary:leakcanary-android:2.9.1"
 accompanistPermissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 accompanistNavigation = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist"}
 
