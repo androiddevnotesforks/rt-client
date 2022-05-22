@@ -1,6 +1,7 @@
 package com.automotivecodelab.rtclient.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -9,7 +10,11 @@ import com.automotivecodelab.featurefavoritesimpl.data.FavoritesDatabase
 import com.automotivecodelab.featurerssfeeds.data.RssChannelDatabase
 import com.automotivecodelab.featurerssfeeds.data.RssChannelDatabaseModel
 
-@Database(entities = [RssChannelDatabaseModel::class, FavoriteDatabaseModel::class], version = 2)
+@Database(
+    entities = [RssChannelDatabaseModel::class, FavoriteDatabaseModel::class],
+    version = 2,
+    autoMigrations = [AutoMigration(from = 1, to = 2)]
+)
 abstract class AppDatabase : RoomDatabase(), RssChannelDatabase, FavoritesDatabase {
     companion object {
         private const val DATABASE_NAME = "db"

@@ -23,6 +23,11 @@ android {
             "String", "SERVER_URL",
             gradleLocalProperties(rootDir).getProperty("SERVER_URL")
         )
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
+            }
+        }
     }
     buildFeatures {
         compose = true
