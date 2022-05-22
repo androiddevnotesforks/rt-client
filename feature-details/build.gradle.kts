@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.accompanistInsets)
     implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistPermissions)
+    implementation(libs.timber)
     // ===dagger===
     implementation(libs.dagger)
     kapt(libs.daggerKapt)

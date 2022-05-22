@@ -21,8 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberImagePainter
+import coil.imageLoader
+import coil.request.DefaultRequestOptions
 import coil.request.ImageRequest
+import coil.request.Parameters
 import coil.size.OriginalSize
 import coil.size.Size
 import com.automotivecodelab.coreui.ui.theme.DefaultCornerRadius
@@ -41,6 +45,7 @@ import com.automotivecodelab.featuredetails.domain.models.SDUITextModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
+import timber.log.Timber
 
 @Composable
 fun SDUIComponent.ToComposable() {
@@ -57,43 +62,31 @@ fun SDUIComponent.ToComposable() {
 
 @Composable
 fun SDUIImage(image: SDUIImageModel) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        val modifier = if (image.width != null && image.height != null) {
+    SubcomposeAsyncImage(
+        modifier = if (image.width != null && image.height != null) {
             Modifier
                 .size(image.width.dp, image.height.dp)
-                .align(Alignment.Center)
         } else {
             Modifier.fillMaxWidth()
-        }
-
-        var isLoading by remember {
-            mutableStateOf(true)
-        }
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(image.url)
-                .size(Size.ORIGINAL)
-                .crossfade(true)
-                .listener(
-                    onStart = { isLoading = true },
-                    onCancel = { isLoading = false },
-                    onError = { _, _ -> isLoading = false },
-                    onSuccess = { _, _ -> isLoading = false }
-                )
-                .build(),
-            contentDescription = null,
-            modifier = modifier.placeholder(
-                visible = isLoading,
+        },
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(image.url)
+            .size(Size.ORIGINAL)
+            .crossfade(true)
+            .build(),
+        loading = {
+            Box(Modifier.placeholder(
+                visible = true,
                 shape = RoundedCornerShape(DefaultCornerRadius),
                 color = Gray,
                 highlight = PlaceholderHighlight.shimmer(
                     highlightColor = LightGray
                 )
-            ),
-            contentScale = ContentScale.Crop
-
-        )
-    }
+            ))
+        },
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Composable

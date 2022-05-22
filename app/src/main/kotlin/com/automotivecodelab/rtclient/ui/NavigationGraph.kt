@@ -24,7 +24,6 @@ const val FAVORITES_GRAPH_ROUTE = "favorites_graph_route"
 
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class,
     ExperimentalMaterialApi::class,
     ExperimentalComposeUiApi::class,
     ExperimentalCoroutinesApi::class,
@@ -235,7 +234,11 @@ fun NavGraphBuilder.torrentDetailsBottomSheet(navController: NavController) {
                     Screen.FeedEntries.routeConstructor(
                         threadId, threadName, torrentIdToOpen = null
                     )
-                )
+                ) {
+                    popUpTo(Screen.FeedEntries.routeId) {
+                        inclusive = true
+                    }
+                }
             },
             detailsDeps = LocalContext.current.appComponent
         )
