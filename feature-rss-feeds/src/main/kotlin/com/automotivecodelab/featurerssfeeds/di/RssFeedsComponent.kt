@@ -4,6 +4,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import com.apollographql.apollo3.ApolloClient
 import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.corenetwork.data.FirebaseRegistrationTokenHolder
+import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import com.automotivecodelab.featurerssfeeds.data.*
 import com.automotivecodelab.featurerssfeeds.domain.RssChannelRepository
 import com.automotivecodelab.featurerssfeeds.ui.rssentriesscreen.RssEntriesViewModel
@@ -56,4 +57,5 @@ interface RssFeedsDeps {
     val graphqlClient: ApolloClient
     val rssChannelDao: RssChannelDao
     val firebaseTokenHolder: FirebaseRegistrationTokenHolder
+    val observeFavoritesUseCase: ObserveFavoritesUseCase
 }

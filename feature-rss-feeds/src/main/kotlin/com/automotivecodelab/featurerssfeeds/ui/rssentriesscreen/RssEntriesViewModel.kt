@@ -8,57 +8,44 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotivecodelab.coreui.ui.Event
 import com.automotivecodelab.featurerssfeeds.di.RssFeedsDiConstants
-import com.automotivecodelab.featurerssfeeds.domain.GetRssChannelUseCase
+import com.automotivecodelab.featurerssfeeds.domain.ObserveRssEntriesUseCase
 import com.automotivecodelab.featurerssfeeds.domain.models.RssChannelEntry
+import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 @ExperimentalMaterialApi
 class RssEntriesViewModel @AssistedInject constructor(
     @Assisted(RssFeedsDiConstants.THREAD_ID) threadId: String,
     @Assisted(RssFeedsDiConstants.TORRENT_ID) torrentId: String?,
-    private val getRssChannelUseCase: GetRssChannelUseCase
+    observeRssEntriesUseCase: ObserveRssEntriesUseCase
 ) : ViewModel() {
 
-    val entries = mutableListOf<RssChannelEntry>()
+    init {
+        Timber.d("start")
+    }
 
-    var isLoading by mutableStateOf(false)
-        private set
-
-    var error by mutableStateOf<Event<Throwable>?>(null)
-        private set
-
-    var closeScreenEvent by mutableStateOf<Event<Unit>?>(null)
-        private set
+    val entries: StateFlow<RssEntriesLoadingResult> = observeRssEntriesUseCase(threadId)
+        .map { result ->
+            if (torrentId != null &&
+                result is RssEntriesLoadingResult.Success &&
+                openDetailsEvent == null) {
+                val rssChannelEntry = result.data.find { it.id == torrentId }
+                if (rssChannelEntry != null) {
+                    openDetailsEvent = Event(rssChannelEntry)
+                }
+            }
+            result
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RssEntriesLoadingResult
+            .Loading)
 
     var openDetailsEvent by mutableStateOf<Event<RssChannelEntry>?>(null)
 
-    init {
-        viewModelScope.launch {
-            isLoading = true
-            getRssChannelUseCase(threadId)
-                .onFailure {
-                    error = Event(it)
-                    closeScreenEvent = Event(Unit)
-                }
-                .onSuccess {
-                    entries.clear()
-                    entries.addAll(it.entries!!)
-                    if (torrentId != null) {
-                        val entryToOpen = it.entries.find {
-                            rssChannelEntry ->
-                            rssChannelEntry.id == torrentId
-                        }
-                        if (entryToOpen != null) {
-                            openDetailsEvent = Event(entryToOpen)
-                        } else {
-                            error = Event(IndexOutOfBoundsException())
-                        }
-                    }
-                }
-            isLoading = false
-        }
+    override fun onCleared() {
+        Timber.d("finish")
+        super.onCleared()
     }
 }

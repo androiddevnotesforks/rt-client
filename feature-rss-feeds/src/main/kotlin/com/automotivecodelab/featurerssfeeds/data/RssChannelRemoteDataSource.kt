@@ -29,8 +29,8 @@ class RssChannelRemoteDataSourceImpl @Inject constructor(
             RssChannelNetworkModel(
                 title = title,
                 threadId = threadId,
-                entries = entries?.map { entry ->
-                    RssChannelEntry(
+                entries = entries.map { entry ->
+                    RssChannelEntryNetworkModel(
                         title = entry.title,
                         link = entry.link,
                         updated = df.parse(entry.updated)!!,

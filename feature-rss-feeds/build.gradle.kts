@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.activityCompose)
     implementation(libs.junit)
     implementation(libs.accompanistInsets)
+    implementation(projects.featureFavoritesApi)
 
     // ===dagger===
     implementation(libs.dagger)

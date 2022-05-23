@@ -41,7 +41,7 @@ class SearchViewModel @Inject constructor(
                 }
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     var sort by mutableStateOf(Sort.Registered)
         private set

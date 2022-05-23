@@ -64,7 +64,7 @@ class DetailsViewModel @AssistedInject constructor(
                     favorite.torrentId == torrentId
                 }
             }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
         viewModelScope.launch {
             isDetailsLoading = true
             getTorrentDescriptionUseCase(torrentId)

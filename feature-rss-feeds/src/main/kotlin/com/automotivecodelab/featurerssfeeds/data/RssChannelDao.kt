@@ -46,7 +46,7 @@ fun RssChannel.toDatabaseModel() = RssChannelDatabaseModel(
     isSubscribed = isSubscribed
 )
 
-fun RssChannelDatabaseModel.toDomainModel(entries: List<RssChannelEntry>?) = RssChannel(
+fun RssChannelDatabaseModel.toDomainModel(entries: List<RssChannelEntry>) = RssChannel(
     title = title,
     threadId = threadId,
     entries = entries,

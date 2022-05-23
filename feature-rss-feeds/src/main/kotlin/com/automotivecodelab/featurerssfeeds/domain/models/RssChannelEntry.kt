@@ -7,5 +7,6 @@ data class RssChannelEntry(
     val link: String,
     val updated: Date,
     val author: String,
-    val id: String
+    val id: String,
+    val isFavorite: Boolean
 )

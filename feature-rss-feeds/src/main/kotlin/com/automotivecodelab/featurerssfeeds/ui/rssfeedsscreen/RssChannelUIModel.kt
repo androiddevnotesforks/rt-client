@@ -7,7 +7,7 @@ import java.util.*
 data class RssChannelUIModel(
     val title: String,
     val threadId: String,
-    val entries: List<RssChannelEntry>?,
+    val entries: List<RssChannelEntry>,
     val isSubscribed: Boolean,
     // workaround for bug with removing a feed from list and then add again the same feed - feed
     // is dismissed after that:

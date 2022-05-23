@@ -1,10 +1,15 @@
 package com.automotivecodelab.featurerssfeeds.data
 
+import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurerssfeeds.domain.RssChannelRepository
 import com.automotivecodelab.featurerssfeeds.domain.models.RssChannel
+import com.automotivecodelab.featurerssfeeds.domain.models.RssChannelEntry
+import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResult
 import javax.inject.Inject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class RssChannelRepositoryImpl @Inject constructor(
@@ -15,7 +20,22 @@ class RssChannelRepositoryImpl @Inject constructor(
     override fun observeAll(): Flow<List<RssChannel>> {
         return localDataSource.observeAll().map {
             it.map { rssChannelDatabaseModel ->
-                rssChannelDatabaseModel.toDomainModel(entries = null)
+                rssChannelDatabaseModel.toDomainModel(entries = emptyList())
+            }
+        }
+    }
+
+    override suspend fun addRssChannel(threadId: String): Result<Unit> {
+        return runCatching {
+            if (!localDataSource.isRssChannelExists(threadId)) {
+                val networkRssChannel = remoteDataSource.getRssChannel(threadId)
+                localDataSource.addRssChannel(
+                    RssChannelDatabaseModel(
+                        threadId = networkRssChannel.threadId,
+                        title = networkRssChannel.title,
+                        isSubscribed = false
+                    )
+                )
             }
         }
     }
@@ -28,23 +48,44 @@ class RssChannelRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRssChannel(threadId: String): Result<RssChannel> {
-        return runCatching {
-            coroutineScope {
-                val networkRssChannelDef = async { remoteDataSource.getRssChannel(threadId) }
-                val isThreadAlreadyAddedLocallyDef = async {
-                    localDataSource.isRssChannelExists(threadId)
+    override fun observeRssChannel(
+        threadId: String,
+        favorites: Flow<List<Favorite>>
+    ): Flow<RssEntriesLoadingResult> {
+        return flow {
+            emit(RssEntriesLoadingResult.Loading)
+            val networkRssChannelResult = runCatching { remoteDataSource.getRssChannel(threadId) }
+            if (networkRssChannelResult.isSuccess) {
+                val networkRssChannel = networkRssChannelResult.getOrThrow()
+                if (!localDataSource.isRssChannelExists(threadId)) {
+                    localDataSource.addRssChannel(
+                        RssChannelDatabaseModel(
+                            threadId = networkRssChannel.threadId,
+                            title = networkRssChannel.title,
+                            isSubscribed = false
+                        )
+                    )
                 }
-                val networkRssChannel = networkRssChannelDef.await()
-                val isThreadAlreadyAddedLocally = isThreadAlreadyAddedLocallyDef.await()
-                if (isThreadAlreadyAddedLocally) {
-                    val localRssChannel = localDataSource.getRssChannelByThreadId(threadId)
-                    localRssChannel.toDomainModel(networkRssChannel.entries)
-                } else {
-                    val domainModel = networkRssChannel.toDomainModel(isSubscribed = false)
-                    localDataSource.addRssChannel(domainModel.toDatabaseModel())
-                    domainModel
+                favorites.collect { favoritesList ->
+                    emit(
+                        RssEntriesLoadingResult.Success(
+                            networkRssChannel.entries.map { rssChannelEntryNetworkModel ->
+                                RssChannelEntry(
+                                    title = rssChannelEntryNetworkModel.title,
+                                    link = rssChannelEntryNetworkModel.link,
+                                    updated = rssChannelEntryNetworkModel.updated,
+                                    author = rssChannelEntryNetworkModel.author,
+                                    id = rssChannelEntryNetworkModel.id,
+                                    isFavorite = favoritesList.any { favorite ->
+                                        favorite.torrentId == rssChannelEntryNetworkModel.id
+                                    }
+                                )
+                            }
+                        )
+                    )
                 }
+            } else {
+                emit(RssEntriesLoadingResult.Error(networkRssChannelResult.exceptionOrNull()))
             }
         }
     }

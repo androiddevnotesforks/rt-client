@@ -4,10 +4,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import com.automotivecodelab.coreui.ui.*
 import com.automotivecodelab.featurerssfeeds.di.DaggerRssFeedsComponent
 import com.automotivecodelab.featurerssfeeds.di.RssFeedsDeps
+import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResult
 import kotlinx.coroutines.CoroutineScope
 
 @ExperimentalMaterialApi
@@ -38,18 +41,6 @@ fun RssEntriesScreen(
         component.rssEntriesViewModelFactory().create(threadId = threadId, torrentId = torrentId)
     }
 
-    viewmodel.error?.ShowErrorSnackbar(
-        scaffoldState = scaffoldState,
-        coroutineScope = coroutineScope
-    )
-
-    viewmodel.closeScreenEvent?.let {
-        if (!it.hasBeenHandled) {
-            it.getContent()
-            navigateUp()
-        }
-    }
-
     viewmodel.openDetailsEvent?.let {
         if (!it.hasBeenHandled) {
             val rssChannelEntry = it.getContent()
@@ -63,8 +54,20 @@ fun RssEntriesScreen(
         }
     }
 
+    val entriesLoadingValue = viewmodel.entries.collectAsState().value
+    if (entriesLoadingValue is RssEntriesLoadingResult.Error) {
+        if (entriesLoadingValue.t != null) {
+            Event(entriesLoadingValue.t).ShowErrorSnackbar(
+                scaffoldState = scaffoldState,
+                coroutineScope = coroutineScope
+            )
+        }
+        navigateUp()
+    }
+
     ListWithCollapsingToolbar(
-        items = viewmodel.entries,
+        items = if (entriesLoadingValue is RssEntriesLoadingResult.Success)
+            entriesLoadingValue.data else emptyList(),
         itemComposable = {
             TorrentCard(
                 title = it.title,
@@ -73,7 +76,8 @@ fun RssEntriesScreen(
                 category = null,
                 formattedSize = null,
                 seeds = null,
-                leeches = null
+                leeches = null,
+                isFavorite = it.isFavorite
             ) {
                 openDetails(
                     it.id,
@@ -96,6 +100,6 @@ fun RssEntriesScreen(
         },
         toolbarColor = MaterialTheme.colors.surface,
         toolbarText = threadName,
-        isLoading = viewmodel.isLoading
+        isLoading = entriesLoadingValue is RssEntriesLoadingResult.Loading
     )
 }
