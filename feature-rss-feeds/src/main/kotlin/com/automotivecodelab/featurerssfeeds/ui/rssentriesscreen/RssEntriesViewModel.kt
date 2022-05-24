@@ -23,10 +23,6 @@ class RssEntriesViewModel @AssistedInject constructor(
     observeRssEntriesUseCase: ObserveRssEntriesUseCase
 ) : ViewModel() {
 
-    init {
-        Timber.d("start")
-    }
-
     val entries: StateFlow<RssEntriesLoadingResult> = observeRssEntriesUseCase(threadId)
         .map { result ->
             if (torrentId != null &&
@@ -39,13 +35,11 @@ class RssEntriesViewModel @AssistedInject constructor(
             }
             result
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RssEntriesLoadingResult
-            .Loading)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            RssEntriesLoadingResult.Loading
+        )
 
     var openDetailsEvent by mutableStateOf<Event<RssChannelEntry>?>(null)
-
-    override fun onCleared() {
-        Timber.d("finish")
-        super.onCleared()
-    }
 }

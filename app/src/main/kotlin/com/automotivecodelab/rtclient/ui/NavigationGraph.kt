@@ -202,7 +202,11 @@ fun NavGraphBuilder.favoritesGraph(
 }
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
-fun NavGraphBuilder.torrentDetailsBottomSheet(navController: NavController) {
+fun NavGraphBuilder.torrentDetailsBottomSheet(
+    navController: NavController,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState
+) {
     bottomSheet(
         route = Screen.Details.routeId,
         arguments = listOf(
@@ -240,7 +244,9 @@ fun NavGraphBuilder.torrentDetailsBottomSheet(navController: NavController) {
                     }
                 }
             },
-            detailsDeps = LocalContext.current.appComponent
+            detailsDeps = LocalContext.current.appComponent,
+            coroutineScope = scope,
+            scaffoldState = scaffoldState
         )
     }
 }

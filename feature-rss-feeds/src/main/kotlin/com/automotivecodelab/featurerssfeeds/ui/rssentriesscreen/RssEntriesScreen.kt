@@ -62,7 +62,9 @@ fun RssEntriesScreen(
                 coroutineScope = coroutineScope
             )
         }
-        navigateUp()
+        LaunchedEffect(key1 = true, block = {
+            navigateUp()
+        })
     }
 
     ListWithCollapsingToolbar(

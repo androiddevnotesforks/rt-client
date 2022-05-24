@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.automotivecodelab.coreui.ui.ShowErrorSnackbar
 import com.automotivecodelab.coreui.ui.injectViewModel
 import com.automotivecodelab.coreui.ui.theme.DefaultPadding
 import com.automotivecodelab.featuredetails.R
@@ -37,6 +38,7 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -47,7 +49,9 @@ fun TorrentDetails(
     title: String,
     url: String,
     navigateToFeed: (title: String, threadId: String) -> Unit,
-    detailsDeps: DetailsComponentDeps
+    detailsDeps: DetailsComponentDeps,
+    scaffoldState: ScaffoldState,
+    coroutineScope: CoroutineScope,
 ) {
     val component = remember {
         DaggerDetailsComponent.builder()
@@ -63,6 +67,8 @@ fun TorrentDetails(
             url = url
         )
     }
+
+    viewModel.error?.ShowErrorSnackbar(scaffoldState, coroutineScope)
 
     viewModel.magnetLinkEvent?.let { event ->
         if (!event.hasBeenHandled) {

@@ -22,7 +22,7 @@ fun TorrentCard(
     formattedSize: String?,
     seeds: Int?,
     leeches: Int?,
-    isFavorite: Boolean? = null,//todo
+    isFavorite: Boolean?,
     onClick: () -> Unit
 ) {
 
@@ -101,7 +101,8 @@ fun TorrentCardPreview() {
         category = "category",
         formattedSize = "5GB",
         seeds = 6,
-        leeches = 8
+        leeches = 8,
+        isFavorite = true
     ) {
 
     }

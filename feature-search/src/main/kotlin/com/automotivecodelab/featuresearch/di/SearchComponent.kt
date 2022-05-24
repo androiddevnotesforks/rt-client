@@ -2,6 +2,7 @@ package com.automotivecodelab.featuresearch.di
 
 import com.apollographql.apollo3.ApolloClient
 import com.automotivecodelab.common.FeatureScoped
+import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import com.automotivecodelab.featuresearch.data.TorrentSearchRemoteDataSource
 import com.automotivecodelab.featuresearch.data.TorrentSearchResultRepositoryImpl
 import com.automotivecodelab.featuresearch.data.TorrentsRemoteDataSourceImpl
@@ -34,4 +35,5 @@ interface SearchModule {
 
 interface SearchComponentDeps {
     val graphQlClient: ApolloClient
+    val observeFavoritesUseCase: ObserveFavoritesUseCase
 }

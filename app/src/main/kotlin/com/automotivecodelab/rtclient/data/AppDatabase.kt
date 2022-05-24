@@ -30,7 +30,6 @@ abstract class AppDatabase : RoomDatabase(), RssChannelDatabase, FavoritesDataba
 
         private fun buildDatabase(context: Context): AppDatabase =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
-                .fallbackToDestructiveMigration()//todo
                 .build()
     }
 }

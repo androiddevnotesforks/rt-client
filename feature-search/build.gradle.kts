@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.apollo)
     apolloMetadata(projects.coreNetwork)
     implementation(projects.coreNetwork)
+    implementation(projects.featureFavoritesApi)
     implementation(libs.paging)
     implementation(libs.pagingCompose)
     implementation(libs.timber)

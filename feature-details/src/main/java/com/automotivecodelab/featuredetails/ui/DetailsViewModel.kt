@@ -54,6 +54,9 @@ class DetailsViewModel @AssistedInject constructor(
 
     var requestFilesystemPermissionEvent by mutableStateOf<Event<Unit>?>(null)
 
+    var error by mutableStateOf<Event<Throwable>?>(null)
+        private set
+
     private var toggleFavoriteJob: Job? = null
 
     init {
@@ -68,7 +71,7 @@ class DetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             isDetailsLoading = true
             getTorrentDescriptionUseCase(torrentId)
-                .onFailure {
+                .onFailure { t ->
                     torrentDescription = TorrentDescriptionUIModel(
                         id = torrentId,
                         category = category,
@@ -85,9 +88,7 @@ class DetailsViewModel @AssistedInject constructor(
                         state = null,
                         isWrongSDUIVersion = false
                     )
-                    if (it !is CancellationException) {
-                        TODO()
-                    }
+                    error = Event(t)
                 }
                 .onSuccess { result ->
                     torrentDescription = result.toUIModel(
@@ -107,7 +108,7 @@ class DetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             isMagnetLinkLoading = true
             getMagnetLinkUseCase(torrentId)
-                .onFailure { TODO() }
+                .onFailure { error = Event(it) }
                 .onSuccess { magnetLinkEvent = Event(it) }
             isMagnetLinkLoading = false
         }

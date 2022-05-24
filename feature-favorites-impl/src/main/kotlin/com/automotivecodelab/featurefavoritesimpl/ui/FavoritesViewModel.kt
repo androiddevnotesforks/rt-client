@@ -7,6 +7,7 @@ import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,12 +16,13 @@ class FavoritesViewModel @Inject constructor(
     observeFavoritesUseCase: ObserveFavoritesUseCase,
     private val deleteFromFavoritesUseCase: DeleteFromFavoritesUseCase
 ): ViewModel() {
-    val favorites: StateFlow<List<Favorite>> = observeFavoritesUseCase()
+    val favorites: StateFlow<List<FavoriteUIModel>> = observeFavoritesUseCase()
+        .map { list -> list.map { favorite -> favorite.toUiModel() } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun deleteFavorite(favorite: Favorite) {
+    fun deleteFavorite(favorite: FavoriteUIModel) {
         viewModelScope.launch {
-            deleteFromFavoritesUseCase(favorite)
+            deleteFromFavoritesUseCase(favorite.toDomainModel())
         }
     }
 }

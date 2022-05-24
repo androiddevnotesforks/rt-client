@@ -202,7 +202,11 @@ fun HostScreen(
                             navController = navController,
                             onMenuItemClick = onMenuItemClick
                         )
-                        torrentDetailsBottomSheet(navController)
+                        torrentDetailsBottomSheet(
+                            navController = navController,
+                            scope = scope,
+                            scaffoldState = scaffoldState
+                        )
                     }
                 }
             }

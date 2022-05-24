@@ -1,5 +1,6 @@
 package com.automotivecodelab.featurefavoritesimpl.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import com.google.accompanist.insets.statusBarsHeight
 import com.automotivecodelab.featurefavoritesimpl.R
 import com.automotivecodelab.featurefavoritesimpl.di.DaggerFavoritesComponent
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FavoritesScreen(
@@ -88,6 +90,7 @@ fun FavoritesScreen(
                 LazyColumn {
                     items(
                         items = favorites.value,
+                        key = { favorite -> favorite.uuid }
                     ) { favorite ->
                         FavoriteCard(
                             favorite = favorite,

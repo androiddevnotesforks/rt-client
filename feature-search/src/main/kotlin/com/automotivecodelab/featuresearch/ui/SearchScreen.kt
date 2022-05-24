@@ -86,7 +86,7 @@ fun SearchScreen(
             toolbarHeight.toPx()
         }
 
-        val toolbarOffsetHeightPx = remember {
+        val toolbarOffsetHeightPx = rememberSaveable {
             mutableStateOf(statusBarHeightPx)
         }
 
@@ -126,20 +126,16 @@ fun SearchScreen(
 
         var searchBarState by rememberSaveable { mutableStateOf(SearchBarState.EMPTY) }
 
-        val searchResultState = rememberSaveable(loadState, searchResult, searchBarState) {
-            when {
-                loadState is LoadState.Loading ->
-                    SearchResultState.LOADING
-                searchResult.itemCount == 0 && searchBarState == SearchBarState.EMPTY ->
-                    SearchResultState.START
-                searchResult.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
-                    SearchResultState.NOTHING_FOUND
-                else ->
-                    SearchResultState.RESULTS
-            }
-        }
-
-        Crossfade(targetState = searchResultState) { state ->
+        Crossfade(targetState = when {
+            loadState is LoadState.Loading ->
+                SearchResultState.LOADING
+            searchResult.itemCount == 0 && searchBarState == SearchBarState.EMPTY ->
+                SearchResultState.START
+            searchResult.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
+                SearchResultState.NOTHING_FOUND
+            else ->
+                SearchResultState.RESULTS
+        }) { state ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -184,7 +180,23 @@ fun SearchScreen(
                                         category = item.category,
                                         formattedSize = item.formattedSize,
                                         seeds = item.seeds,
-                                        leeches = item.leeches
+                                        leeches = item.leeches,
+                                        // due to paging library architecture, the only way for
+                                        // combining two data flows (paging data and favorites) i
+                                        // found is to do it right in composable. The reason is
+                                        // Flow<PagingData> should be collected only by
+                                        // collectAsLazyPagingItems().
+                                        // This approach may cause some performance issue. Known
+                                        // alternatives of handling data in repository:
+                                        // 1. pagerFlow.flatMapLatest{} leads to runtime crash with
+                                        // exception from paging library - "pagingData should be
+                                        // collected only by collectAsLazyPagingItems()"
+                                        // 2. favorites.flatMapLatest{} leads to data been reloaded
+                                        // every time favorites emits. Best alternative
+                                        // 3. favorites.first() will be reacting to changes only
+                                        // after data reload
+                                        isFavorite = viewmodel.favorites.collectAsState().value
+                                            .any { it.torrentId == item.id }
                                     ) {
                                         focusManager.clearFocus()
                                         openDetails(
