@@ -3,7 +3,6 @@ package com.automotivecodelab.featurefavoritesimpl.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotivecodelab.featurefavoritesapi.DeleteFromFavoritesUseCase
-import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

@@ -14,7 +14,6 @@ import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResu
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 
 @ExperimentalMaterialApi
 class RssEntriesViewModel @AssistedInject constructor(
@@ -42,4 +41,5 @@ class RssEntriesViewModel @AssistedInject constructor(
         )
 
     var openDetailsEvent by mutableStateOf<Event<RssChannelEntry>?>(null)
+        private set
 }

@@ -35,4 +35,10 @@ class TorrentSearchResultRepositoryImpl @Inject constructor(
             remoteDataSource.getSearchSuggestions(query)
         }
     }
+
+    override suspend fun getTrends(): Result<List<String>> {
+        return runCatching {
+            remoteDataSource.getTrends()
+        }
+    }
 }

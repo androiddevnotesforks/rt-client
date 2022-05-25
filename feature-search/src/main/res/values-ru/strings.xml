@@ -10,4 +10,5 @@
     <string name="last_message">Последнее сообщение</string>
     <string name="seeds">Сиды</string>
     <string name="leeches">Личи</string>
+    <string name="trendingQueries">Популярные запросы</string>
 </resources>

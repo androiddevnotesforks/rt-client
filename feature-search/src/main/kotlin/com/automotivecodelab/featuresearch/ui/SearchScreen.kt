@@ -3,6 +3,7 @@ package com.automotivecodelab.featuresearch.ui
 import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -129,8 +130,14 @@ fun SearchScreen(
         Crossfade(targetState = when {
             loadState is LoadState.Loading ->
                 SearchResultState.LOADING
-            searchResult.itemCount == 0 && searchBarState == SearchBarState.EMPTY ->
+            searchResult.itemCount == 0 &&
+                    searchBarState == SearchBarState.EMPTY &&
+                    viewmodel.trends.isEmpty() ->
                 SearchResultState.START
+            searchResult.itemCount == 0 &&
+                    searchBarState == SearchBarState.EMPTY &&
+                    viewmodel.trends.isNotEmpty() ->
+                SearchResultState.TRENDS
             searchResult.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
                 SearchResultState.NOTHING_FOUND
             else ->
@@ -148,11 +155,31 @@ fun SearchScreen(
                         CircularProgressIndicator(Modifier.align(Alignment.Center))
                     }
                     SearchResultState.START -> {
-                        Text(
-                            text = stringResource(id = R.string.type_to_start_searching),
+
+                    }
+                    SearchResultState.TRENDS -> {
+                        Column(
                             modifier = Modifier.align(Alignment.Center),
-                            fontWeight = FontWeight.Light
-                        )
+                            verticalArrangement = Arrangement.spacedBy(DefaultPadding),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.trendingQueries),
+                                fontWeight = FontWeight.Light
+                            )
+                            Spacer(modifier = Modifier.height(DefaultPadding))
+                            viewmodel.trends.forEach {
+                                Text(
+                                    text = it,
+                                    fontWeight = FontWeight.Light,
+                                    modifier = Modifier
+                                        .clickable {
+                                            viewmodel.onQueryChange(it)
+                                            viewmodel.search()
+                                        }
+                                )
+                            }
+                        }
                     }
                     SearchResultState.NOTHING_FOUND -> {
                         Text(
@@ -235,5 +262,5 @@ fun SearchScreen(
 }
 
 enum class SearchResultState {
-    START, LOADING, NOTHING_FOUND, RESULTS
+    START, LOADING, NOTHING_FOUND, RESULTS, TRENDS
 }

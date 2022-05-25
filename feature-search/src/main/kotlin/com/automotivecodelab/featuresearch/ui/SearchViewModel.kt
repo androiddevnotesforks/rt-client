@@ -9,6 +9,7 @@ import com.automotivecodelab.coreui.ui.Event
 import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import com.automotivecodelab.featuresearch.domain.GetSearchSuggestionsUseCase
+import com.automotivecodelab.featuresearch.domain.GetTrendsUseCase
 import com.automotivecodelab.featuresearch.domain.SearchTorrentsUseCase
 import com.automotivecodelab.featuresearch.domain.models.Order
 import com.automotivecodelab.featuresearch.domain.models.Sort
@@ -20,7 +21,8 @@ import kotlinx.coroutines.flow.*
 class SearchViewModel @Inject constructor(
     private val searchTorrentsUseCase: SearchTorrentsUseCase,
     private val getSearchSuggestionsUseCase: GetSearchSuggestionsUseCase,
-    observeFavoritesUseCase: ObserveFavoritesUseCase
+    observeFavoritesUseCase: ObserveFavoritesUseCase,
+    getTrendsUseCase: GetTrendsUseCase
 ) : ViewModel() {
 
     var searchResults by mutableStateOf(emptyFlow<PagingData<TorrentSearchResult>>())
@@ -28,6 +30,15 @@ class SearchViewModel @Inject constructor(
 
     val favorites: StateFlow<List<Favorite>> = observeFavoritesUseCase()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    var trends by mutableStateOf<List<String>>(emptyList())
+        private set
+    init {
+        viewModelScope.launch {
+            getTrendsUseCase()
+                .onSuccess { trends = it }
+        }
+    }
 
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
@@ -57,6 +68,7 @@ class SearchViewModel @Inject constructor(
         private set
 
     var error by mutableStateOf<Event<Throwable>?>(null)
+        private set
 
     fun onQueryChange(query: String) {
         viewModelScope.launch {

@@ -13,4 +13,5 @@ interface TorrentSearchResultRepository {
         order: Order
     ): Flow<PagingData<TorrentSearchResult>>
     suspend fun getSearchSuggestions(query: String): Result<List<String>>
+    suspend fun getTrends(): Result<List<String>>
 }

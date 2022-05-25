@@ -16,7 +16,6 @@ import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

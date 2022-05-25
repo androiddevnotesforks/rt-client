@@ -38,6 +38,7 @@ type Query {
     magnetLink(id: String!): String!
     getRss(threadId: String!): RssChannel!
     getSearchSuggestions(query: String!): [String!]!
+    getTrendingSearches: [String!]!
 }
 
 type Mutation {

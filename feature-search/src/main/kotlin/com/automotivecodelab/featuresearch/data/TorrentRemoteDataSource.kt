@@ -3,6 +3,7 @@ package com.automotivecodelab.featuresearch.data
 import com.apollographql.apollo3.ApolloClient
 import com.automotivecodelab.featuresearch.SearchQuery
 import com.automotivecodelab.featuresearch.SearchSuggestionsQuery
+import com.automotivecodelab.featuresearch.TrendingSearchesQuery
 import com.automotivecodelab.featuresearch.domain.models.Order
 import com.automotivecodelab.featuresearch.domain.models.Sort
 import com.automotivecodelab.featuresearch.domain.models.TorrentSearchResult
@@ -18,6 +19,7 @@ interface TorrentSearchRemoteDataSource {
         endIndex: Int
     ): List<TorrentSearchResult>
     suspend fun getSearchSuggestions(query: String): List<String>
+    suspend fun getTrends(): List<String>
 }
 
 class TorrentsRemoteDataSourceImpl @Inject constructor(
@@ -55,5 +57,10 @@ class TorrentsRemoteDataSourceImpl @Inject constructor(
     override suspend fun getSearchSuggestions(query: String): List<String> {
         val response = graphqlClient.query(SearchSuggestionsQuery(query)).execute()
         return response.dataAssertNoErrors.getSearchSuggestions
+    }
+
+    override suspend fun getTrends(): List<String> {
+        val response = graphqlClient.query(TrendingSearchesQuery()).execute()
+        return response.dataAssertNoErrors.getTrendingSearches
     }
 }
