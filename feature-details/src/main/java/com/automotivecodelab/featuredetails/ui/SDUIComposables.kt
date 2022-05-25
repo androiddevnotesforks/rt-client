@@ -2,7 +2,6 @@ package com.automotivecodelab.featuredetails.ui
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,14 +19,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberImagePainter
-import coil.imageLoader
-import coil.request.DefaultRequestOptions
 import coil.request.ImageRequest
-import coil.request.Parameters
-import coil.size.OriginalSize
 import coil.size.Size
 import com.automotivecodelab.coreui.ui.theme.DefaultCornerRadius
 import com.automotivecodelab.coreui.ui.theme.DefaultPadding
@@ -45,7 +38,6 @@ import com.automotivecodelab.featuredetails.domain.models.SDUITextModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
-import timber.log.Timber
 
 @Composable
 fun SDUIComponent.ToComposable() {

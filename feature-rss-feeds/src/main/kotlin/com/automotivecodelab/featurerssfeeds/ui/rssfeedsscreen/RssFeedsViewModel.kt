@@ -24,7 +24,7 @@ class RssFeedsViewModel @Inject constructor(
                 rssChannel.toUIModel()
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     var newRssUrl by mutableStateOf("")
         private set

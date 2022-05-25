@@ -4,8 +4,9 @@
     <string name="threads">Threads</string>
     <string name="add">Add</string>
     <string name="thread_url">Thread URL</string>
-    <string name="subscribed">You subscribed to push notifications from feed %1$s</string>
-    <string name="unsubscribed">You unsubscribed from feed %1$s</string>
+    <string name="subscribed">You subscribed to push notifications from thread %1$s</string>
+    <string name="unsubscribed">You unsubscribed from thread %1$s</string>
     <string name="add_thread_hint">You can either add a direct link to thread or use thread
     link from torrent details page</string>
+    <string name="empty_feeds_list_hint">Your threads will appear here</string>
 </resources>

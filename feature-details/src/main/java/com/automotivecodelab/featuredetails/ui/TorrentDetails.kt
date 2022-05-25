@@ -255,7 +255,9 @@ fun TorrentDetails(
                                 ) {
                                     Icon(
                                         painter = painterResource(id =
-                                            if (isFavorite.value) R.drawable.ic_baseline_star_24
+                                            if (isFavorite.value)
+                                                com.automotivecodelab.coreui.R.drawable
+                                                    .ic_baseline_star_24
                                             else R.drawable.ic_baseline_star_border_24
                                         ),
                                         null

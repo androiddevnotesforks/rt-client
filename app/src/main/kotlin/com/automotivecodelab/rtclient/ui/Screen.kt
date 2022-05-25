@@ -45,7 +45,7 @@ sealed class Screen(
 
     object Favorites : Screen(
         routeId = "favorites",
-        icon = R.drawable.ic_baseline_star_24,
+        icon = com.automotivecodelab.coreui.R.drawable.ic_baseline_star_24,
         label = R.string.favorites
     )
 

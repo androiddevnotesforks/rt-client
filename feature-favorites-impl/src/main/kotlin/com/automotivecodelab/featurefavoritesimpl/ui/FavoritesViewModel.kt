@@ -15,9 +15,9 @@ class FavoritesViewModel @Inject constructor(
     observeFavoritesUseCase: ObserveFavoritesUseCase,
     private val deleteFromFavoritesUseCase: DeleteFromFavoritesUseCase
 ): ViewModel() {
-    val favorites: StateFlow<List<FavoriteUIModel>> = observeFavoritesUseCase()
+    val favorites: StateFlow<List<FavoriteUIModel>?> = observeFavoritesUseCase()
         .map { list -> list.map { favorite -> favorite.toUiModel() } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     fun deleteFavorite(favorite: FavoriteUIModel) {
         viewModelScope.launch {
