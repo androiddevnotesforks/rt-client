@@ -1,9 +1,11 @@
 package com.automotivecodelab.featuredetails.data
 
+import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.featuredetails.domain.TorrentDetailsRepository
 import com.automotivecodelab.featuredetails.domain.models.TorrentDescription
 import javax.inject.Inject
 
+@FeatureScoped
 class TorrentDetailsRepositoryImpl @Inject constructor(
     private val remoteDataSource: TorrentDetailsRemoteDataSource
 ) : TorrentDetailsRepository {

@@ -3,6 +3,7 @@ package com.automotivecodelab.rtclient.ui
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.automotivecodelab.rtclient.R
+import timber.log.Timber
 
 sealed class Screen(
     val routeId: String,
@@ -62,8 +63,12 @@ sealed class Screen(
             title: String,
             url: String,
         ) : String {
-            return "details?$TORRENT_ID=$torrentId&$CATEGORY=$category&$AUTHOR=$author&" +
-                    "$TITLE=$title&$URL=$url"
+            // path parsing by navigation component goes wrong when there is "#" symbol in path
+            val _category = category.replace('#', ' ')
+            val _author = author.replace('#', ' ')
+            val _title = title.replace('#', ' ')
+            return "details?$TORRENT_ID=$torrentId&$CATEGORY=$_category&$AUTHOR=$_author&" +
+                    "$TITLE=$_title&$URL=$url"
         }
         const val TORRENT_ID = "torrent_id"
         const val CATEGORY = "category"

@@ -14,8 +14,9 @@ import com.automotivecodelab.featurefavoritesimpl.ui.FavoritesViewModel
 import dagger.Binds
 import dagger.Component
 import dagger.Module
+import javax.inject.Singleton
 
-@FeatureScoped
+@Singleton
 @Component(
     dependencies = [FavoritesComponentDeps::class],
     modules = [FavoritesModule::class]

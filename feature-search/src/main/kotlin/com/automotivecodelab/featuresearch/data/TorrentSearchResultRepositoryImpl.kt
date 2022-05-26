@@ -3,6 +3,7 @@ package com.automotivecodelab.featuresearch.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.featuresearch.domain.TorrentSearchResultRepository
 import com.automotivecodelab.featuresearch.domain.models.Order
 import com.automotivecodelab.featuresearch.domain.models.Sort
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 
 const val NETWORK_PAGE_SIZE = 10
 
+@FeatureScoped
 class TorrentSearchResultRepositoryImpl @Inject constructor(
     private val remoteDataSource: TorrentSearchRemoteDataSource
 ) : TorrentSearchResultRepository {

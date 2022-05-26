@@ -29,6 +29,14 @@ android {
             }
         }
     }
+    // offline release build
+//    buildTypes {
+//        release {
+//            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+//                mappingFileUploadEnabled = false
+//            }
+//        }
+//    }
     buildFeatures {
         compose = true
     }

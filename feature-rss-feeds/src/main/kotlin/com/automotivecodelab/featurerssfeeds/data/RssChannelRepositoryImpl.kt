@@ -1,5 +1,6 @@
 package com.automotivecodelab.featurerssfeeds.data
 
+import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurerssfeeds.domain.RssChannelRepository
 import com.automotivecodelab.featurerssfeeds.domain.models.RssChannel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
+@FeatureScoped
 class RssChannelRepositoryImpl @Inject constructor(
     private val remoteDataSource: RssChannelRemoteDataSource,
     private val localDataSource: RssChannelLocalDataSource

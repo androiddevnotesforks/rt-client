@@ -17,10 +17,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.bottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
-const val SEARCH_GRAPH_ROUTE = "search_graph_route"
-const val RSS_FEEDS_GRAPH_ROUTE = "rss_feeds_graph_route"
-const val FAVORITES_GRAPH_ROUTE = "favorites_graph_route"
+import timber.log.Timber
 
 @OptIn(
     ExperimentalAnimationApi::class,
@@ -29,175 +26,162 @@ const val FAVORITES_GRAPH_ROUTE = "favorites_graph_route"
     ExperimentalCoroutinesApi::class,
     kotlinx.coroutines.FlowPreview::class
 )
-fun NavGraphBuilder.searchGraph(
+fun NavGraphBuilder.searchScreen(
     navController: NavController,
     onMenuItemClick: () -> Unit
 ) {
-    navigation(
-        startDestination = Screen.Search.routeId,
-        route = SEARCH_GRAPH_ROUTE
-    ) {
-        composable(Screen.Search.routeId) {
-            SearchScreen(
-                onMenuItemClick = onMenuItemClick,
-                openDetails = { torrentId: String, category: String, author: String, title: String,
-                                url: String ->
-                    navController.navigate(
-                        route = Screen.Details.routeConstructor(
-                            torrentId = torrentId,
-                            category = category,
-                            author = author,
-                            title = title,
-                            url = url
-                        )
+    composable(Screen.Search.routeId) {
+        SearchScreen(
+            onMenuItemClick = onMenuItemClick,
+            openDetails = { torrentId: String, category: String, author: String, title: String,
+                            url: String ->
+                navController.navigate(
+                    route = Screen.Details.routeConstructor(
+                        torrentId = torrentId,
+                        category = category,
+                        author = author,
+                        title = title,
+                        url = url
                     )
-                },
-                searchComponentDeps = LocalContext.current.appComponent,
-            )
-        }
-        //torrentDetailsBottomSheet(navController)
+                )
+            },
+            searchComponentDeps = LocalContext.current.appComponent,
+        )
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
-fun NavGraphBuilder.rssFeedsGraph(
+fun NavGraphBuilder.feedsScreen(
     navController: NavController,
     onMenuItemClick: () -> Unit,
+) {
+    composable(
+        route = Screen.Feeds.routeId,
+        enterTransition = {
+            when (initialState.destination.route) {
+                Screen.FeedEntries.routeId ->
+                    slideIntoContainer(
+                        AnimatedContentScope.SlideDirection.Right
+                    )
+                else -> fadeIn()
+            }
+        },
+        exitTransition = {
+            when (targetState.destination.route) {
+                Screen.FeedEntries.routeId ->
+                    slideOutOfContainer(
+                        AnimatedContentScope.SlideDirection.Left
+                    )
+                else -> fadeOut()
+            }
+        }
+    ) {
+        RssFeedsScreen(
+            onMenuItemClick = onMenuItemClick,
+            navigateToFeedEntriesScreen = { title, threadId ->
+                navController.navigate(
+                    Screen.FeedEntries.routeConstructor(
+                        threadId, title, torrentIdToOpen = null
+                    )
+                )
+            },
+            rssFeedsDeps = LocalContext.current.appComponent
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+fun NavGraphBuilder.feedEntriesScreen(
+    navController: NavController,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
-    navigation(
-        startDestination = Screen.Feeds.routeId,
-        route = RSS_FEEDS_GRAPH_ROUTE
-    ) {
-        composable(
-            route = Screen.Feeds.routeId,
-            enterTransition = {
-                when (initialState.destination.route) {
-                    Screen.FeedEntries.routeId ->
-                        slideIntoContainer(
-                            AnimatedContentScope.SlideDirection.Right
-                        )
-                    else -> EnterTransition.None
-                }
-            },
-            exitTransition = {
-                when (targetState.destination.route) {
-                    Screen.FeedEntries.routeId ->
-                        slideOutOfContainer(
-                            AnimatedContentScope.SlideDirection.Left
-                        )
-                    else -> fadeOut()
-                }
+    composable(
+        route = Screen.FeedEntries.routeId,
+        arguments = listOf(
+            navArgument(Screen.FeedEntries.THREAD_ID) { nullable = true },
+            navArgument(Screen.FeedEntries.TITLE) { nullable = true },
+            navArgument(Screen.FeedEntries.TORRENT_ID) { nullable = true }
+        ),
+        deepLinks = listOf(
+            navDeepLink {
+                uriPattern = "${Screen.URI}/${Screen.FeedEntries.routeId}"
             }
-        ) {
-            RssFeedsScreen(
-                onMenuItemClick = onMenuItemClick,
-                navigateToFeedEntriesScreen = { title, threadId ->
-                    navController.navigate(
-                        Screen.FeedEntries.routeConstructor(
-                            threadId, title, torrentIdToOpen = null
-                        )
+        ),
+        enterTransition = {
+            when (initialState.destination.route) {
+                Screen.Feeds.routeId ->
+                    slideIntoContainer(
+                        AnimatedContentScope.SlideDirection.Left
                     )
-                },
-                rssFeedsDeps = LocalContext.current.appComponent
-            )
-        }
-        composable(
-            route = Screen.FeedEntries.routeId,
-            arguments = listOf(
-                navArgument(Screen.FeedEntries.THREAD_ID) { nullable = true },
-                navArgument(Screen.FeedEntries.TITLE) { nullable = true },
-                navArgument(Screen.FeedEntries.TORRENT_ID) { nullable = true }
-            ),
-            deepLinks = listOf(
-                navDeepLink {
-                    uriPattern = "${Screen.URI}/${Screen.FeedEntries.routeId}"
-                }
-            ),
-            enterTransition = {
-                when (initialState.destination.route) {
-                    Screen.Feeds.routeId ->
-                        slideIntoContainer(
-                            AnimatedContentScope.SlideDirection.Left
-                        )
-                    else -> fadeIn()
-                }
-
-            },
-            exitTransition = {
-                when (targetState.destination.route) {
-                    Screen.Feeds.routeId ->
-                        slideOutOfContainer(
-                            AnimatedContentScope.SlideDirection.Right
-                        )
-                    else -> fadeOut()
-                }
-            },
-
-            ) { backStackEntry ->
-            val threadId = backStackEntry.arguments?.getString(
-                Screen.FeedEntries.THREAD_ID
-            )
-            val title = backStackEntry.arguments?.getString(
-                Screen.FeedEntries.TITLE)
-            val torrentIdToOpen = backStackEntry.arguments?.getString(
-                Screen.FeedEntries.TORRENT_ID
-            )
-            RssEntriesScreen(
-                threadName = title!!,
-                threadId = threadId!!,
-                navigateUp = navController::navigateUp,
-                rssFeedsDeps = LocalContext.current.appComponent,
-                scaffoldState = scaffoldState,
-                coroutineScope = scope,
-                openDetails = { torrentId: String, category: String, author: String, _title: String,
-                                url: String ->
-                    navController.navigate(
-                        route = Screen.Details.routeConstructor(
-                            torrentId = torrentId,
-                            category = category,
-                            author = author,
-                            title = _title,
-                            url = url
-                        )
+                else -> fadeIn()
+            }
+        },
+        exitTransition = {
+            when (targetState.destination.route) {
+                Screen.Feeds.routeId ->
+                    slideOutOfContainer(
+                        AnimatedContentScope.SlideDirection.Right
                     )
-                },
-                torrentId = torrentIdToOpen
-            )
-        }
-        //torrentDetailsBottomSheet(navController)
+                else -> fadeOut()
+            }
+        },
+
+        ) { backStackEntry ->
+        val threadId = backStackEntry.arguments?.getString(
+            Screen.FeedEntries.THREAD_ID
+        )
+        val title = backStackEntry.arguments?.getString(
+            Screen.FeedEntries.TITLE)
+        val torrentIdToOpen = backStackEntry.arguments?.getString(
+            Screen.FeedEntries.TORRENT_ID
+        )
+        RssEntriesScreen(
+            threadName = title!!,
+            threadId = threadId!!,
+            navigateUp = navController::navigateUp,
+            rssFeedsDeps = LocalContext.current.appComponent,
+            scaffoldState = scaffoldState,
+            coroutineScope = scope,
+            openDetails = { torrentId: String, category: String, author: String, _title: String,
+                            url: String ->
+                navController.navigate(
+                    route = Screen.Details.routeConstructor(
+                        torrentId = torrentId,
+                        category = category,
+                        author = author,
+                        title = _title,
+                        url = url
+                    )
+                )
+            },
+            torrentId = torrentIdToOpen
+        )
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.favoritesGraph(
+fun NavGraphBuilder.favoritesScreen(
     navController: NavController,
     onMenuItemClick: () -> Unit
 ) {
-    navigation(
-        startDestination = Screen.Favorites.routeId,
-        route = FAVORITES_GRAPH_ROUTE
-    ) {
-        composable(Screen.Favorites.routeId) {
-            FavoritesScreen(
-                onMenuItemClick = onMenuItemClick,
-                favoritesComponentDeps = LocalContext.current.appComponent,
-                openDetails = { torrentId: String, category: String, author: String, title: String,
-                                url: String ->
-                    navController.navigate(
-                        route = Screen.Details.routeConstructor(
-                            torrentId = torrentId,
-                            category = category,
-                            author = author,
-                            title = title,
-                            url = url
-                        )
+    composable(Screen.Favorites.routeId) {
+        FavoritesScreen(
+            onMenuItemClick = onMenuItemClick,
+            favoritesComponentDeps = LocalContext.current.appComponent,
+            openDetails = { torrentId: String, category: String, author: String, title: String,
+                            url: String ->
+                navController.navigate(
+                    route = Screen.Details.routeConstructor(
+                        torrentId = torrentId,
+                        category = category,
+                        author = author,
+                        title = title,
+                        url = url
                     )
-                },
-            )
-        }
-        //torrentDetailsBottomSheet(navController)
+                )
+            },
+        )
     }
 }
 
@@ -239,8 +223,11 @@ fun NavGraphBuilder.torrentDetailsBottomSheet(
                         threadId, threadName, torrentIdToOpen = null
                     )
                 ) {
-                    popUpTo(Screen.FeedEntries.routeId) {
-                        inclusive = true
+                    if (navController.previousBackStackEntry?.destination?.route ==
+                        Screen.FeedEntries.routeId) {
+                        popUpTo(Screen.FeedEntries.routeId) {
+                            inclusive = true
+                        }
                     }
                 }
             },

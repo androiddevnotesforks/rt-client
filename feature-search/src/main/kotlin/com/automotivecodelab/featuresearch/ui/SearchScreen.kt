@@ -1,6 +1,7 @@
 package com.automotivecodelab.featuresearch.ui
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -36,8 +38,10 @@ import com.automotivecodelab.featuresearch.di.DaggerSearchComponent
 import com.automotivecodelab.featuresearch.di.SearchComponentDeps
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import timber.log.Timber
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalAnimationApi
@@ -163,11 +167,20 @@ fun SearchScreen(
                             verticalArrangement = Arrangement.spacedBy(DefaultPadding),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(
-                                text = stringResource(id = R.string.trendingQueries),
-                                fontWeight = FontWeight.Light
-                            )
-                            Spacer(modifier = Modifier.height(DefaultPadding))
+                            if (LocalConfiguration.current.orientation ==
+                                Configuration.ORIENTATION_LANDSCAPE) {
+                                Spacer(
+                                    modifier = Modifier.height(toolbarHeight).statusBarsPadding()
+                                )
+                            } else {
+                                Text(
+                                    text = stringResource(id = R.string.trendingQueries),
+                                    fontWeight = FontWeight.Light
+                                )
+                                Spacer(
+                                    modifier = Modifier.height(DefaultPadding)
+                                )
+                            }
                             viewmodel.trends.forEach {
                                 Text(
                                     text = it,
@@ -226,6 +239,7 @@ fun SearchScreen(
                                             .any { it.torrentId == item.id }
                                     ) {
                                         focusManager.clearFocus()
+                                        Timber.d(item.toString())
                                         openDetails(
                                             item.id,
                                             item.category,

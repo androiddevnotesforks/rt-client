@@ -7,7 +7,9 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import timber.log.Timber
+import javax.inject.Singleton
 
+@Singleton
 class FirebaseRegistrationTokenHolderImpl @Inject constructor() : FirebaseRegistrationTokenHolder {
     // bridging callbacks and coroutines
     override suspend fun get() = suspendCoroutine<String> { continuation ->

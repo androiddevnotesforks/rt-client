@@ -2,7 +2,6 @@ package com.automotivecodelab.rtclient.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +32,7 @@ import com.google.accompanist.navigation.material.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
+import java.lang.RuntimeException
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialNavigationApi::class)
@@ -78,6 +78,9 @@ fun HostScreen(
             AppTheme.AUTO -> isSystemInDarkTheme
         }
     }
+    var selectedDrawerItem by rememberSaveable {
+        mutableStateOf(Screen.Search.routeId)
+    }
 
     CircularReveal(targetState = darkMode, animationSpec = tween(500)) { isDarkTheme ->
         RTClientTheme(isDarkTheme) {
@@ -101,63 +104,65 @@ fun HostScreen(
                 ),
                 drawerContent = {
                     Spacer(modifier = Modifier.statusBarsHeight())
-                    val currentScreenRouteId by navController.currentScreenRouteId().collectAsState(
-                        initial = Screen.Search.routeId
-                    )
                     DrawerItem(
                         painter = painterResource(id = Screen.Search.icon!!),
                         text = stringResource(id = Screen.Search.label!!),
                         onClick = {
                             scope.launch {
+                                selectedDrawerItem = Screen.Search.routeId
                                 scaffoldState.drawerState.close()
-                                navController.navigate(SEARCH_GRAPH_ROUTE) {
-                                    popUpTo(Screen.Search.routeId)
+                                navController.navigate(Screen.Search.routeId) {
+                                    popUpTo(navController.firstInBackStack())
                                         {
                                             saveState = true
+                                            inclusive = true
                                         }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
                             }
                         },
-                        isSelected = currentScreenRouteId == Screen.Search.routeId
+                        isSelected = selectedDrawerItem == Screen.Search.routeId
                     )
                     DrawerItem(
                         painter = painterResource(id = Screen.Feeds.icon!!),
                         text = stringResource(id = Screen.Feeds.label!!),
                         onClick = {
+                            selectedDrawerItem = Screen.Feeds.routeId
                             scope.launch {
                                 scaffoldState.drawerState.close()
-                                navController.navigate(RSS_FEEDS_GRAPH_ROUTE) {
-                                    popUpTo(Screen.Search.routeId)
+                                navController.navigate(Screen.Feeds.routeId) {
+                                    popUpTo(navController.firstInBackStack())
                                         {
                                             saveState = true
+                                            inclusive = true
                                         }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
                             }
                         },
-                        isSelected = currentScreenRouteId == Screen.Feeds.routeId ||
-                                currentScreenRouteId == Screen.FeedEntries.routeId
+                        isSelected = selectedDrawerItem == Screen.Feeds.routeId
                     )
                     DrawerItem(
                         painter = painterResource(id = Screen.Favorites.icon!!),
                         text = stringResource(id = Screen.Favorites.label!!),
                         onClick = {
+                            selectedDrawerItem = Screen.Favorites.routeId
                             scope.launch {
                                 scaffoldState.drawerState.close()
-                                navController.navigate(FAVORITES_GRAPH_ROUTE) {
-                                    popUpTo(Screen.Search.routeId)
+                                navController.navigate(Screen.Favorites.routeId) {
+                                    popUpTo(navController.firstInBackStack())
                                         {
                                             saveState = true
+                                            inclusive = true
                                         }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
                             }
                         },
-                        isSelected = currentScreenRouteId == Screen.Favorites.routeId
+                        isSelected = selectedDrawerItem == Screen.Favorites.routeId
 
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -179,26 +184,31 @@ fun HostScreen(
                     BackHandler(enabled = modalBottomSheetState.isVisible ||
                             scaffoldState.drawerState.isOpen
                     ) {
-                        if (scaffoldState.drawerState.isOpen)
-                            scope.launch { scaffoldState.drawerState.close() }
-                        else if (modalBottomSheetState.isVisible)
-                            scope.launch { modalBottomSheetState.hide() }
+                        scope.launch {
+                            if (scaffoldState.drawerState.isOpen)
+                                scaffoldState.drawerState.close()
+                            else if (modalBottomSheetState.isVisible)
+                                modalBottomSheetState.hide()
+                        }
                     }
                     AnimatedNavHost(
                         navController = navController,
-                        startDestination = SEARCH_GRAPH_ROUTE
+                        startDestination = Screen.Search.routeId
                     ) {
-                        searchGraph(
+                        searchScreen(
                             navController = navController,
                             onMenuItemClick = onMenuItemClick
                         )
-                        rssFeedsGraph(
+                        feedsScreen(
                             navController = navController,
                             onMenuItemClick = onMenuItemClick,
+                        )
+                        feedEntriesScreen(
+                            navController = navController,
                             scope = scope,
                             scaffoldState = scaffoldState
                         )
-                        favoritesGraph(
+                        favoritesScreen(
                             navController = navController,
                             onMenuItemClick = onMenuItemClick
                         )
@@ -221,18 +231,13 @@ fun HostScreen(
         // navigate() instead of handleDeepLink() causes much more stranger bug:
         // https://stackoverflow.com/questions/68456471/jetpack-compose-bottom-bar-navigation-not-responding-after-deep-linking
         intent.flags = 0
+        selectedDrawerItem = Screen.Feeds.routeId
         navController.handleDeepLink(intent)
     }
 }
 
-fun NavController.currentScreenRouteId(): Flow<String> {
-    return currentBackStackEntryFlow
-        .map {
-            if (it.destination.route == Screen.Details.routeId)
-                previousBackStackEntry?.destination?.route
-            else
-                it.destination.route
-        }
-        .filterNotNull()
+fun NavController.firstInBackStack(): String {
+    return backQueue.first().destination.route ?: backQueue[1].destination.route ?:
+    throw RuntimeException("firstInBackStack error, current dest ${currentDestination?.route}")
 }
 
