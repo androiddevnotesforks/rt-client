@@ -1,7 +1,6 @@
 package com.automotivecodelab.featurerssfeeds.domain
 
 import android.net.Uri
-import com.automotivecodelab.featurerssfeeds.domain.models.RssChannel
 import java.util.*
 import javax.inject.Inject
 

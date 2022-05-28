@@ -1,8 +1,8 @@
 package com.automotivecodelab.featurefavoritesimpl.data
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 import java.util.*
+import kotlinx.coroutines.flow.Flow
 
 interface FavoritesDatabase {
     fun favoritesDao(): FavoritesDao

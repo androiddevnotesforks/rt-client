@@ -31,12 +31,13 @@ class SearchViewModel @Inject constructor(
     val favorites: StateFlow<List<Favorite>> = observeFavoritesUseCase()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    var trends by mutableStateOf<List<String>>(emptyList())
+    var trends by mutableStateOf<TrendsLoadingState>(TrendsLoadingState.Loading)
         private set
     init {
         viewModelScope.launch {
             getTrendsUseCase()
-                .onSuccess { trends = it }
+                .onSuccess { trends = TrendsLoadingState.Success(it) }
+                .onFailure { trends = TrendsLoadingState.Error }
         }
     }
 

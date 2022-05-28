@@ -103,11 +103,13 @@ fun RssFeedsScreen(
         }
     ) {
         val rssChannels = viewModel.rssChannels.collectAsState().value
-        Crossfade(targetState = when {
-            rssChannels == null -> RssFeedsScreenState.LOADING
-            rssChannels.isEmpty() -> RssFeedsScreenState.EMPTY
-            else -> RssFeedsScreenState.FEEDS
-        }) {
+        Crossfade(
+            targetState = when {
+                rssChannels == null -> RssFeedsScreenState.LOADING
+                rssChannels.isEmpty() -> RssFeedsScreenState.EMPTY
+                else -> RssFeedsScreenState.FEEDS
+            }
+        ) {
             when (it) {
                 RssFeedsScreenState.LOADING -> {}
                 RssFeedsScreenState.EMPTY -> {
@@ -156,7 +158,10 @@ fun RssFeedsScreen(
                                     }
                                 },
                                 onClick = {
-                                    navigateToFeedEntriesScreen(rssChannel.title, rssChannel.threadId)
+                                    navigateToFeedEntriesScreen(
+                                        rssChannel.title,
+                                        rssChannel.threadId
+                                    )
                                 },
                             )
                         }

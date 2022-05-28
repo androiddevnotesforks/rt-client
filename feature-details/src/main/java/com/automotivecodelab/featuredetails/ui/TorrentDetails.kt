@@ -87,7 +87,8 @@ fun TorrentDetails(
         if (!event.hasBeenHandled) {
             event.getContent()
             val permissionState = rememberPermissionState(
-                permission = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
             LaunchedEffect(key1 = true, block = {
                 permissionState.launchPermissionRequest()
             })
@@ -201,7 +202,9 @@ fun TorrentDetails(
                                 withStyle(
                                     style = SpanStyle(
                                         textDecoration = TextDecoration.Underline,
-                                        color = MaterialTheme.colors.primary)) {
+                                        color = MaterialTheme.colors.primary
+                                    )
+                                ) {
                                     append(torrentDescription.category)
                                 }
                             }
@@ -254,7 +257,8 @@ fun TorrentDetails(
                                     onCheckedChange = { viewModel.toggleFavorite() }
                                 ) {
                                     Icon(
-                                        painter = painterResource(id =
+                                        painter = painterResource(
+                                            id =
                                             if (isFavorite.value)
                                                 com.automotivecodelab.coreui.R.drawable
                                                     .ic_baseline_star_24
@@ -262,7 +266,6 @@ fun TorrentDetails(
                                         ),
                                         null
                                     )
-
                                 }
                             }
                         }

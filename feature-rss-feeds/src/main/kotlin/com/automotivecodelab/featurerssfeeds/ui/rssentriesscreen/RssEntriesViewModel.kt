@@ -26,7 +26,8 @@ class RssEntriesViewModel @AssistedInject constructor(
         .map { result ->
             if (torrentId != null &&
                 result is RssEntriesLoadingResult.Success &&
-                openDetailsEvent == null) {
+                openDetailsEvent == null
+            ) {
                 val rssChannelEntry = result.data.find { it.id == torrentId }
                 if (rssChannelEntry != null) {
                     openDetailsEvent = Event(rssChannelEntry)

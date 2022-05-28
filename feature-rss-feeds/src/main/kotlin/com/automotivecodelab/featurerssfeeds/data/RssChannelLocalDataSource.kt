@@ -1,9 +1,7 @@
 package com.automotivecodelab.featurerssfeeds.data
 
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 
 interface RssChannelLocalDataSource {
     suspend fun addRssChannel(rssChannel: RssChannelDatabaseModel)

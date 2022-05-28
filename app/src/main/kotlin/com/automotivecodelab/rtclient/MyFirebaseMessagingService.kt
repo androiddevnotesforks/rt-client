@@ -40,13 +40,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val uniqueId = Random(System.currentTimeMillis()).nextInt()
 
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.getActivity(
-                applicationContext, uniqueId, deepLinkIntent, PendingIntent.FLAG_IMMUTABLE
-            )
-        } else {
-            PendingIntent.getActivity(applicationContext, uniqueId, deepLinkIntent, 0)
-        }
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE
+        else 0
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext, uniqueId, deepLinkIntent, flags
+        )
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_notif)
             .setContentTitle(feed)

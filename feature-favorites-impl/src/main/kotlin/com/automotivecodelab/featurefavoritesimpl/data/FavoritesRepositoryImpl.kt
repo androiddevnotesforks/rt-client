@@ -2,15 +2,15 @@ package com.automotivecodelab.featurefavoritesimpl.data
 
 import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurefavoritesimpl.domain.FavoritesRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class FavoritesRepositoryImpl @Inject constructor(
     private val favoritesDao: FavoritesDao
-): FavoritesRepository {
+) : FavoritesRepository {
     override fun observeFavorites(): Flow<List<Favorite>> {
         return favoritesDao.observeFavorites()
             .map { list ->

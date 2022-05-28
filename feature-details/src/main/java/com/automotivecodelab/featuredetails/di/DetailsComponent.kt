@@ -24,7 +24,8 @@ import javax.inject.Named
 @FeatureScoped
 @Component(
     modules = [DetailsModule::class],
-    dependencies = [DetailsComponentDeps::class])
+    dependencies = [DetailsComponentDeps::class]
+)
 interface DetailsComponent {
     @AssistedFactory
     interface DetailsViewModelFactory {

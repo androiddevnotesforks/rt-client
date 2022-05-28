@@ -4,10 +4,10 @@ import com.automotivecodelab.corenetwork.data.FirebaseRegistrationTokenHolder
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import timber.log.Timber
-import javax.inject.Singleton
 
 @Singleton
 class FirebaseRegistrationTokenHolderImpl @Inject constructor() : FirebaseRegistrationTokenHolder {

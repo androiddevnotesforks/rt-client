@@ -1,24 +1,13 @@
 package com.automotivecodelab.featurerssfeeds.data
 
-import com.automotivecodelab.featurerssfeeds.domain.models.RssChannelEntry
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResult
 import java.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.runBlocking
+import org.junit.Test
 
 class RssChannelRepositoryImplTest {
-
-    @Before
-    fun setUp() {
-    }
-
-    @After
-    fun tearDown() {
-    }
 
     @Test
     fun get_rss_channel_for_already_existing_channel() {
@@ -27,8 +16,14 @@ class RssChannelRepositoryImplTest {
             remoteDataSource = RemoteDataSourceMock()
         )
         runBlocking {
-            val result = repository.getRssChannel("id").getOrThrow()
-            assert(result.threadId == RemoteDataSourceMock.RSS_CHANNEL_ID)
+            repository.observeRssChannel(
+                RemoteDataSourceMock.RSS_CHANNEL_ID,
+                emptyFlow()
+            ).collect { result ->
+                if (result is RssEntriesLoadingResult.Success) {
+                    assert(result.data[0].id == RemoteDataSourceMock.ENTRY_ID)
+                }
+            }
         }
     }
 
@@ -40,16 +35,19 @@ class RssChannelRepositoryImplTest {
         )
         runBlocking {
             val id = UUID.randomUUID().toString()
-            val result = repository.getRssChannel(id).getOrThrow()
-            assert(result.threadId == id)
+            repository.observeRssChannel(id, emptyFlow()).collect { result ->
+                if (result is RssEntriesLoadingResult.Success) {
+                    assert(result.data[0].id == RemoteDataSourceMock.ENTRY_ID)
+                }
+            }
         }
     }
 }
 
-class LocalDataSourceMock(private val isRssChannelExists: Boolean)
-    : RssChannelLocalDataSource {
+class LocalDataSourceMock(private val isRssChannelExists: Boolean) :
+    RssChannelLocalDataSource {
     override suspend fun addRssChannel(rssChannel: RssChannelDatabaseModel) {
-
+        TODO("Not yet implemented")
     }
 
     override suspend fun getRssChannelByThreadId(threadId: String): RssChannelDatabaseModel {
@@ -77,19 +75,20 @@ class LocalDataSourceMock(private val isRssChannelExists: Boolean)
     }
 }
 
-class RemoteDataSourceMock: RssChannelRemoteDataSource {
+class RemoteDataSourceMock : RssChannelRemoteDataSource {
     companion object {
         const val RSS_CHANNEL_ID = "networkChannelId"
+        const val ENTRY_ID = "entryId"
     }
     override suspend fun getRssChannel(threadId: String): RssChannelNetworkModel {
         return RssChannelNetworkModel(
             title = "Title",
             threadId = RSS_CHANNEL_ID,
             entries = listOf(
-                RssChannelEntry(
+                RssChannelEntryNetworkModel(
                     title = "Entry title",
                     author = "Author",
-                    id = "id",
+                    id = ENTRY_ID,
                     link = "http://example.com",
                     updated = Date()
                 )
@@ -104,5 +103,4 @@ class RemoteDataSourceMock: RssChannelRemoteDataSource {
     override suspend fun unsubscribeFromRssChannel(threadId: String): Result<Unit> {
         TODO("Not yet implemented")
     }
-
 }

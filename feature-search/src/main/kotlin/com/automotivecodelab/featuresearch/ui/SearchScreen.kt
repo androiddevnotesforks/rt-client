@@ -131,22 +131,28 @@ fun SearchScreen(
 
         var searchBarState by rememberSaveable { mutableStateOf(SearchBarState.EMPTY) }
 
-        Crossfade(targetState = when {
-            loadState is LoadState.Loading ->
-                SearchResultState.LOADING
-            searchResult.itemCount == 0 &&
+        Crossfade(
+            targetState = when {
+                loadState is LoadState.Loading ->
+                    SearchResultState.LOADING
+                searchResult.itemCount == 0 &&
                     searchBarState == SearchBarState.EMPTY &&
-                    viewmodel.trends.isEmpty() ->
-                SearchResultState.START
-            searchResult.itemCount == 0 &&
+                    viewmodel.trends is TrendsLoadingState.Loading ->
+                    SearchResultState.TRENDS_LOADING
+                searchResult.itemCount == 0 &&
                     searchBarState == SearchBarState.EMPTY &&
-                    viewmodel.trends.isNotEmpty() ->
-                SearchResultState.TRENDS
-            searchResult.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
-                SearchResultState.NOTHING_FOUND
-            else ->
-                SearchResultState.RESULTS
-        }) { state ->
+                    viewmodel.trends is TrendsLoadingState.Success ->
+                    SearchResultState.TRENDS
+                searchResult.itemCount == 0 &&
+                    searchBarState == SearchBarState.EMPTY &&
+                    viewmodel.trends is TrendsLoadingState.Error ->
+                    SearchResultState.TRENDS_FAILURE
+                searchResult.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
+                    SearchResultState.NOTHING_FOUND
+                else ->
+                    SearchResultState.RESULTS
+            }
+        ) { state ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -158,39 +164,52 @@ fun SearchScreen(
                     SearchResultState.LOADING -> {
                         CircularProgressIndicator(Modifier.align(Alignment.Center))
                     }
-                    SearchResultState.START -> {
-
+                    SearchResultState.TRENDS_LOADING -> {
+                    }
+                    SearchResultState.TRENDS_FAILURE -> {
+                        Text(
+                            text = stringResource(id = R.string.type_to_start_searching),
+                            modifier = Modifier.align(Alignment.Center),
+                            fontWeight = FontWeight.Light
+                        )
                     }
                     SearchResultState.TRENDS -> {
-                        Column(
-                            modifier = Modifier.align(Alignment.Center),
-                            verticalArrangement = Arrangement.spacedBy(DefaultPadding),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            if (LocalConfiguration.current.orientation ==
-                                Configuration.ORIENTATION_LANDSCAPE) {
-                                Spacer(
-                                    modifier = Modifier.height(toolbarHeight).statusBarsPadding()
-                                )
-                            } else {
-                                Text(
-                                    text = stringResource(id = R.string.trendingQueries),
-                                    fontWeight = FontWeight.Light
-                                )
-                                Spacer(
-                                    modifier = Modifier.height(DefaultPadding)
-                                )
-                            }
-                            viewmodel.trends.forEach {
-                                Text(
-                                    text = it,
-                                    fontWeight = FontWeight.Light,
-                                    modifier = Modifier
-                                        .clickable {
-                                            viewmodel.onQueryChange(it)
-                                            viewmodel.search()
-                                        }
-                                )
+                        val trends = (viewmodel.trends as? TrendsLoadingState.Success)?.data
+                        if (trends != null) {
+                            Column(
+                                modifier = Modifier.align(Alignment.Center),
+                                verticalArrangement = Arrangement.spacedBy(DefaultPadding),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                if (LocalConfiguration.current.orientation ==
+                                    Configuration.ORIENTATION_LANDSCAPE
+                                ) {
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(toolbarHeight)
+                                            .statusBarsPadding()
+                                    )
+                                } else {
+                                    Text(
+                                        text = stringResource(id = R.string.trendingQueries),
+                                        fontWeight = FontWeight.Light
+                                    )
+                                    Spacer(
+                                        modifier = Modifier.height(DefaultPadding)
+                                    )
+                                }
+                                trends.forEach {
+                                    Text(
+                                        text = it,
+                                        fontWeight = FontWeight.Light,
+                                        modifier = Modifier
+                                            .clickable {
+                                                viewmodel.onQueryChange(it)
+                                                viewmodel.search()
+                                                searchBarState = SearchBarState.WITH_QUERY
+                                            }
+                                    )
+                                }
                             }
                         }
                     }
@@ -276,5 +295,5 @@ fun SearchScreen(
 }
 
 enum class SearchResultState {
-    START, LOADING, NOTHING_FOUND, RESULTS, TRENDS
+    LOADING, NOTHING_FOUND, RESULTS, TRENDS, TRENDS_LOADING, TRENDS_FAILURE
 }

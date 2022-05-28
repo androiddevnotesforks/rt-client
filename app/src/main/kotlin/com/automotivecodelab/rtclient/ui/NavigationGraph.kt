@@ -17,7 +17,6 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.bottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import timber.log.Timber
 
 @OptIn(
     ExperimentalAnimationApi::class,
@@ -34,7 +33,7 @@ fun NavGraphBuilder.searchScreen(
         SearchScreen(
             onMenuItemClick = onMenuItemClick,
             openDetails = { torrentId: String, category: String, author: String, title: String,
-                            url: String ->
+                url: String ->
                 navController.navigate(
                     route = Screen.Details.routeConstructor(
                         torrentId = torrentId,
@@ -127,12 +126,13 @@ fun NavGraphBuilder.feedEntriesScreen(
             }
         },
 
-        ) { backStackEntry ->
+    ) { backStackEntry ->
         val threadId = backStackEntry.arguments?.getString(
             Screen.FeedEntries.THREAD_ID
         )
         val title = backStackEntry.arguments?.getString(
-            Screen.FeedEntries.TITLE)
+            Screen.FeedEntries.TITLE
+        )
         val torrentIdToOpen = backStackEntry.arguments?.getString(
             Screen.FeedEntries.TORRENT_ID
         )
@@ -144,7 +144,7 @@ fun NavGraphBuilder.feedEntriesScreen(
             scaffoldState = scaffoldState,
             coroutineScope = scope,
             openDetails = { torrentId: String, category: String, author: String, _title: String,
-                            url: String ->
+                url: String ->
                 navController.navigate(
                     route = Screen.Details.routeConstructor(
                         torrentId = torrentId,
@@ -170,7 +170,7 @@ fun NavGraphBuilder.favoritesScreen(
             onMenuItemClick = onMenuItemClick,
             favoritesComponentDeps = LocalContext.current.appComponent,
             openDetails = { torrentId: String, category: String, author: String, title: String,
-                            url: String ->
+                url: String ->
                 navController.navigate(
                     route = Screen.Details.routeConstructor(
                         torrentId = torrentId,
@@ -202,15 +202,20 @@ fun NavGraphBuilder.torrentDetailsBottomSheet(
         ),
     ) { backStackEntry ->
         val torrentId = backStackEntry.arguments?.getString(
-            Screen.Details.TORRENT_ID)
+            Screen.Details.TORRENT_ID
+        )
         val category = backStackEntry.arguments?.getString(
-            Screen.Details.CATEGORY)
+            Screen.Details.CATEGORY
+        )
         val author = backStackEntry.arguments?.getString(
-            Screen.Details.AUTHOR)
+            Screen.Details.AUTHOR
+        )
         val title = backStackEntry.arguments?.getString(
-            Screen.Details.TITLE)
+            Screen.Details.TITLE
+        )
         val url = backStackEntry.arguments?.getString(
-            Screen.Details.URL)
+            Screen.Details.URL
+        )
         TorrentDetails(
             torrentId = torrentId!!,
             category = category!!,
@@ -220,11 +225,12 @@ fun NavGraphBuilder.torrentDetailsBottomSheet(
             navigateToFeed = { threadName: String, threadId: String ->
                 navController.navigate(
                     Screen.FeedEntries.routeConstructor(
-                        threadId, threadName, torrentIdToOpen = null
+                        threadId = threadId, title = threadName, torrentIdToOpen = null
                     )
                 ) {
                     if (navController.previousBackStackEntry?.destination?.route ==
-                        Screen.FeedEntries.routeId) {
+                        Screen.FeedEntries.routeId
+                    ) {
                         popUpTo(Screen.FeedEntries.routeId) {
                             inclusive = true
                         }

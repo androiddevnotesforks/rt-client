@@ -1,9 +1,7 @@
 package com.automotivecodelab.rtclient.di
 
 import android.content.Context
-import com.automotivecodelab.featuredetails.di.DetailsComponent
 import com.automotivecodelab.featuredetails.di.DetailsComponentDeps
-import com.automotivecodelab.featurefavoritesimpl.di.FavoritesComponent
 import com.automotivecodelab.featurefavoritesimpl.di.FavoritesComponentDeps
 import com.automotivecodelab.featurefavoritesimpl.di.FavoritesModule
 import com.automotivecodelab.featurerssfeeds.di.RssFeedsDeps
@@ -23,8 +21,8 @@ import javax.inject.Singleton
         FavoritesModule::class
     ]
 )
-interface ApplicationComponent
-    : DetailsComponentDeps, SearchComponentDeps, RssFeedsDeps, FavoritesComponentDeps {
+interface ApplicationComponent :
+    DetailsComponentDeps, SearchComponentDeps, RssFeedsDeps, FavoritesComponentDeps {
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance context: Context): ApplicationComponent

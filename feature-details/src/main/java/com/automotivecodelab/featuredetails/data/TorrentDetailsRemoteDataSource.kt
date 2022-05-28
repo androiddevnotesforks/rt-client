@@ -4,8 +4,8 @@ import android.app.DownloadManager
 import android.net.Uri
 import android.os.Environment
 import com.apollographql.apollo3.ApolloClient
-import com.automotivecodelab.featuredetails.di.TorrentDetailsDiConstants
 import com.automotivecodelab.featuredetails.MagnetLinkQuery
+import com.automotivecodelab.featuredetails.di.TorrentDetailsDiConstants
 import com.automotivecodelab.featuredetails.domain.models.TorrentDescription
 import javax.inject.Inject
 import javax.inject.Named
@@ -45,7 +45,7 @@ class TorrentDetailsRemoteDataSourceImpl @Inject constructor(
         while (filename.contains("  ")) {
             filename = filename.replace("  ", " ")
         }
-        filename = "${filename}.torrent"
+        filename = "$filename.torrent"
         val request = DownloadManager.Request(
             Uri.parse("${serverUrl}torrent/file?id=$torrentId")
         )

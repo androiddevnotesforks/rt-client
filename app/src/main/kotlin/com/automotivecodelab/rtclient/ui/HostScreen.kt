@@ -30,9 +30,9 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import java.lang.RuntimeException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.lang.RuntimeException
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialNavigationApi::class)
@@ -112,11 +112,10 @@ fun HostScreen(
                                 selectedDrawerItem = Screen.Search.routeId
                                 scaffoldState.drawerState.close()
                                 navController.navigate(Screen.Search.routeId) {
-                                    popUpTo(navController.firstInBackStack())
-                                        {
-                                            saveState = true
-                                            inclusive = true
-                                        }
+                                    popUpTo(navController.firstInBackStack()) {
+                                        saveState = true
+                                        inclusive = true
+                                    }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -132,11 +131,10 @@ fun HostScreen(
                             scope.launch {
                                 scaffoldState.drawerState.close()
                                 navController.navigate(Screen.Feeds.routeId) {
-                                    popUpTo(navController.firstInBackStack())
-                                        {
-                                            saveState = true
-                                            inclusive = true
-                                        }
+                                    popUpTo(navController.firstInBackStack()) {
+                                        saveState = true
+                                        inclusive = true
+                                    }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -152,11 +150,10 @@ fun HostScreen(
                             scope.launch {
                                 scaffoldState.drawerState.close()
                                 navController.navigate(Screen.Favorites.routeId) {
-                                    popUpTo(navController.firstInBackStack())
-                                        {
-                                            saveState = true
-                                            inclusive = true
-                                        }
+                                    popUpTo(navController.firstInBackStack()) {
+                                        saveState = true
+                                        inclusive = true
+                                    }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -181,7 +178,8 @@ fun HostScreen(
                     sheetBackgroundColor = MaterialTheme.colors.background,
                     sheetElevation = if (isDarkTheme) 0.dp else ModalBottomSheetDefaults.Elevation,
                 ) {
-                    BackHandler(enabled = modalBottomSheetState.isVisible ||
+                    BackHandler(
+                        enabled = modalBottomSheetState.isVisible ||
                             scaffoldState.drawerState.isOpen
                     ) {
                         scope.launch {
@@ -237,7 +235,8 @@ fun HostScreen(
 }
 
 fun NavController.firstInBackStack(): String {
-    return backQueue.first().destination.route ?: backQueue[1].destination.route ?:
-    throw RuntimeException("firstInBackStack error, current dest ${currentDestination?.route}")
+    return backQueue.first().destination.route ?: backQueue[1].destination.route
+        ?: throw RuntimeException(
+            "firstInBackStack error, current dest ${currentDestination?.route}"
+        )
 }
-

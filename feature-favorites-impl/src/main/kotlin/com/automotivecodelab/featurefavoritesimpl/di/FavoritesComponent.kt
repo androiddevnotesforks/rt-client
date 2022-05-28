@@ -1,6 +1,5 @@
 package com.automotivecodelab.featurefavoritesimpl.di
 
-import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.featurefavoritesapi.AddToFavoriteUseCase
 import com.automotivecodelab.featurefavoritesapi.DeleteFromFavoritesUseCase
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
@@ -37,8 +36,9 @@ interface FavoritesModule {
     fun bindAddToFavoritesUseCase(impl: AddToFavoritesUseCaseImpl): AddToFavoriteUseCase
 
     @Binds
-    fun bindDeleteFromFavoritesUseCase(impl: DeleteFromFavoritesUseCaseImpl)
-    : DeleteFromFavoritesUseCase
+    fun bindDeleteFromFavoritesUseCase(
+        impl: DeleteFromFavoritesUseCaseImpl
+    ): DeleteFromFavoritesUseCase
 }
 
 interface FavoritesComponentDeps {

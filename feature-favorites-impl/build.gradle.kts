@@ -3,7 +3,6 @@ plugins {
     id("kotlin-kapt")
 }
 
-
 android {
     buildFeatures {
         compose = true

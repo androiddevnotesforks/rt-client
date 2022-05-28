@@ -3,7 +3,6 @@ plugins {
     id("kotlin-kapt")
 }
 
-
 dependencies {
     implementation(libs.bundles.android)
 }

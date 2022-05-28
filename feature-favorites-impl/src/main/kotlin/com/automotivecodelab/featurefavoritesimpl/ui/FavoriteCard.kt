@@ -68,7 +68,7 @@ fun FavoriteCard(
     ) {
         Surface(
             elevation =
-                animateDpAsState(if (dismissState.dismissDirection != null) 4.dp else 0.dp).value,
+            animateDpAsState(if (dismissState.dismissDirection != null) 4.dp else 0.dp).value,
             modifier = Modifier
                 .fillMaxWidth(),
             color = MaterialTheme.colors.background

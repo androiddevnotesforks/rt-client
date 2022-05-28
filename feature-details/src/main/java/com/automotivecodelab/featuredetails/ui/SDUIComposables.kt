@@ -57,31 +57,32 @@ fun SDUIImage(image: SDUIImageModel) {
     Box(modifier = Modifier.fillMaxWidth()) {
         SubcomposeAsyncImage(
             modifier =
-                if (image.width != null && image.height != null) {
-                    Modifier.size(image.width.dp, image.height.dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                }.align(Alignment.Center),
+            if (image.width != null && image.height != null) {
+                Modifier.size(image.width.dp, image.height.dp)
+            } else {
+                Modifier.fillMaxWidth()
+            }.align(Alignment.Center),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(image.url)
                 .size(Size.ORIGINAL)
                 .crossfade(true)
                 .build(),
             loading = {
-                Box(Modifier.placeholder(
-                    visible = true,
-                    shape = RoundedCornerShape(DefaultCornerRadius),
-                    color = Gray,
-                    highlight = PlaceholderHighlight.shimmer(
-                        highlightColor = LightGray
+                Box(
+                    Modifier.placeholder(
+                        visible = true,
+                        shape = RoundedCornerShape(DefaultCornerRadius),
+                        color = Gray,
+                        highlight = PlaceholderHighlight.shimmer(
+                            highlightColor = LightGray
+                        )
                     )
-                ))
+                )
             },
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
     }
-
 }
 
 @Composable

@@ -149,9 +149,7 @@ fun SearchBar(
                                 ) {
                                     append(suggestion.take(startIndex))
                                 }
-                                withStyle(style = SpanStyle()) {
-                                    append(suggestion.substring(startIndex, endIndex))
-                                }
+                                append(suggestion.substring(startIndex, endIndex))
                                 withStyle(
                                     style = SpanStyle(
                                         color = MaterialTheme.colors.onSurface

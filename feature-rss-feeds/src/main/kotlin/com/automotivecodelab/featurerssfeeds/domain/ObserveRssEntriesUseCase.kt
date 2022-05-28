@@ -1,10 +1,9 @@
 package com.automotivecodelab.featurerssfeeds.domain
 
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
-import com.automotivecodelab.featurerssfeeds.domain.models.RssChannel
 import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResult
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveRssEntriesUseCase @Inject constructor(
     private val rssChannelRepository: RssChannelRepository,

@@ -9,7 +9,6 @@ import com.automotivecodelab.featurerssfeeds.domain.models.RssEntriesLoadingResu
 import javax.inject.Inject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
@@ -41,7 +40,6 @@ class RssChannelRepositoryImpl @Inject constructor(
             }
         }
     }
-
 
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun deleteRssChannel(rssChannel: RssChannel) {

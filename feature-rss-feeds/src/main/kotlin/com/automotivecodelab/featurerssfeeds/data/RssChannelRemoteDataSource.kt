@@ -5,7 +5,6 @@ import com.automotivecodelab.corenetwork.data.FirebaseRegistrationTokenHolder
 import com.automotivecodelab.featurerssfeeds.GetRssFeedQuery
 import com.automotivecodelab.featurerssfeeds.SubscribeToRssMutation
 import com.automotivecodelab.featurerssfeeds.UnsubscribeFromRssMutation
-import com.automotivecodelab.featurerssfeeds.domain.models.RssChannelEntry
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*

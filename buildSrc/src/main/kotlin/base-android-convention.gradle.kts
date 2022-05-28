@@ -11,8 +11,8 @@ configure<BaseExtension> {
     defaultConfig {
         minSdk = 21
         targetSdk = 31
-        versionCode = 5
-        versionName = "1.0.4"
+        versionCode = 6
+        versionName = "1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -35,8 +35,14 @@ configure<BaseExtension> {
 
     // ktlint
     // kotlin packages shows as java packages if enabled
-//    sourceSets {
-//        val kotlinAdditionalSourceSets = project.file("src/main/kotlin")
-//        findByName("main")?.java?.srcDirs(kotlinAdditionalSourceSets)
-//    }
+//        sourceSets {
+//            val kotlinAdditionalSourceSets = project.file("src/main/kotlin")
+//            val kotlinAdditionalSourceSetsTest = project.file("src/test/kotlin")
+//            val kotlinAdditionalSourceSetsAndroidTest = project.file("src/androidTest/kotlin")
+//            findByName("main")?.java?.srcDirs(
+//                kotlinAdditionalSourceSets,
+//                kotlinAdditionalSourceSetsTest,
+//                kotlinAdditionalSourceSetsAndroidTest
+//            )
+//        }
 }

@@ -87,7 +87,6 @@ fun TorrentCard(
                 }
             }
         }
-
     }
 }
 
@@ -104,6 +103,5 @@ fun TorrentCardPreview() {
         leeches = 8,
         isFavorite = true
     ) {
-
     }
 }

@@ -39,8 +39,12 @@ class TorrentSearchResultRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTrends(): Result<List<String>> {
-        return runCatching {
-            remoteDataSource.getTrends()
+        var t: Throwable? = null
+        for (i in 0..2) {
+            runCatching { remoteDataSource.getTrends() }
+                .onSuccess { return Result.success(it) }
+                .onFailure { t = it }
         }
+        return Result.failure(t ?: RuntimeException())
     }
 }

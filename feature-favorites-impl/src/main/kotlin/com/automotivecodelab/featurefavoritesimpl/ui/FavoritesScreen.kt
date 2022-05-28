@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import com.automotivecodelab.coreui.ui.EmptyListPlaceholder
 import com.automotivecodelab.coreui.ui.SnackbarWithInsets
 import com.automotivecodelab.coreui.ui.injectViewModel
+import com.automotivecodelab.featurefavoritesimpl.R
+import com.automotivecodelab.featurefavoritesimpl.di.DaggerFavoritesComponent
 import com.automotivecodelab.featurefavoritesimpl.di.FavoritesComponentDeps
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
-import com.automotivecodelab.featurefavoritesimpl.R
-import com.automotivecodelab.featurefavoritesimpl.di.DaggerFavoritesComponent
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class)
@@ -85,11 +85,13 @@ fun FavoritesScreen(
         }
     ) {
         val favorites = viewmodel.favorites.collectAsState().value
-        Crossfade(targetState = when {
-            favorites == null -> FavoritesScreenState.LOADING
-            favorites.isEmpty() -> FavoritesScreenState.EMPTY
-            else -> FavoritesScreenState.FAVORITES
-        }) {
+        Crossfade(
+            targetState = when {
+                favorites == null -> FavoritesScreenState.LOADING
+                favorites.isEmpty() -> FavoritesScreenState.EMPTY
+                else -> FavoritesScreenState.FAVORITES
+            }
+        ) {
             when (it) {
                 FavoritesScreenState.LOADING -> {}
                 FavoritesScreenState.EMPTY -> {
