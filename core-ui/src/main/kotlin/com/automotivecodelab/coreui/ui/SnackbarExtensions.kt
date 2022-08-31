@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 fun Event<Throwable>.ShowErrorSnackbar(scaffoldState: ScaffoldState) {
     if (!hasBeenHandled) {
         val message = getUserFriendlyErrorMessage(t = this.getContent())
-        LaunchedEffect(key1 = this) {
+        LaunchedEffect(key1 = message) {
             scaffoldState.snackbarHostState.run {
                 currentSnackbarData?.dismiss()
                 showSnackbar(message)

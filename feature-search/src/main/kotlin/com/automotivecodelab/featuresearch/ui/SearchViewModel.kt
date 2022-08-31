@@ -25,7 +25,7 @@ class SearchViewModel @Inject constructor(
     getTrendsUseCase: GetTrendsUseCase
 ) : ViewModel() {
 
-    var searchResults by mutableStateOf(emptyFlow<PagingData<TorrentSearchResult>>())
+    var searchResults by mutableStateOf<Flow<PagingData<TorrentSearchResult>>?>(null)
         private set
 
     val favorites: StateFlow<List<Favorite>> = observeFavoritesUseCase()
@@ -68,9 +68,6 @@ class SearchViewModel @Inject constructor(
     var order by mutableStateOf(Order.Desc)
         private set
 
-    var error by mutableStateOf<Event<Throwable>?>(null)
-        private set
-
     fun onQueryChange(query: String) {
         viewModelScope.launch {
             _query.value = query
@@ -96,9 +93,5 @@ class SearchViewModel @Inject constructor(
             searchResults = searchTorrentsUseCase(_query.value, sort, order)
                 .cachedIn(viewModelScope)
         }
-    }
-
-    fun setError(t: Throwable) {
-        error = Event(t)
     }
 }

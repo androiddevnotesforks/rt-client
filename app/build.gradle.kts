@@ -1,11 +1,14 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
+// https://youtrack.jetbrains.com/issue/KTIJ-19369
+@Suppress(
+    "DSL_SCOPE_VIOLATION"
+)
 plugins {
     id("android-application-convention")
     id("kotlin-kapt")
     id("com.google.gms.google-services")
-    // "libs.versions" is not accessible in "plugins": https://youtrack.jetbrains.com/issue/KTIJ-19369
-    id("com.apollographql.apollo3").version("3.0.0")
+    alias(libs.plugins.apollo)
     id("com.google.firebase.crashlytics")
 }
 
@@ -29,14 +32,6 @@ android {
             }
         }
     }
-    // offline release build
-//    buildTypes {
-//        release {
-//            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
-//                mappingFileUploadEnabled = false
-//            }
-//        }
-//    }
     buildFeatures {
         compose = true
     }

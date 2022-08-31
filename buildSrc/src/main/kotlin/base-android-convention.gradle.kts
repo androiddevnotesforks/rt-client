@@ -6,11 +6,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 configure<BaseExtension> {
 
-    setCompileSdkVersion(31)
-
     defaultConfig {
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
+        compileSdkVersion(32)
         versionCode = 7
         versionName = "1.1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

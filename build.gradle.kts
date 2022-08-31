@@ -1,5 +1,5 @@
 plugins {
-    id("org.jlleitschuh.gradle.ktlint").version("10.2.1")
+    id("org.jlleitschuh.gradle.ktlint").version("10.3.0")
 }
 
 subprojects {
@@ -17,18 +17,11 @@ buildscript {
     }
     // firebase
     dependencies {
-        classpath("com.google.gms:google-services:4.3.10")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.0")
+        classpath("com.google.gms:google-services:4.3.13")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.1")
     }
 }
 
 tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
-}
-
-// workaround for build failure with multi-module apollo config
-tasks.all {
-    if (name == "checkServiceApolloDuplicates") {
-        enabled = false
-    }
 }

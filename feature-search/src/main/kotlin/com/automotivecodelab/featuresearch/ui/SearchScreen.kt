@@ -28,10 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.automotivecodelab.coreui.ui.ShowErrorSnackbar
-import com.automotivecodelab.coreui.ui.SnackbarWithInsets
-import com.automotivecodelab.coreui.ui.TorrentCard
-import com.automotivecodelab.coreui.ui.injectViewModel
+import com.automotivecodelab.coreui.ui.*
 import com.automotivecodelab.coreui.ui.theme.DefaultPadding
 import com.automotivecodelab.featuresearch.R
 import com.automotivecodelab.featuresearch.di.DaggerSearchComponent
@@ -70,8 +67,6 @@ fun SearchScreen(
     val viewmodel: SearchViewModel = injectViewModel { component.searchViewModel() }
 
     val scaffoldState = rememberScaffoldState()
-
-    viewmodel.error?.ShowErrorSnackbar(scaffoldState)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -114,19 +109,12 @@ fun SearchScreen(
             }
         }
 
-        val searchResult = viewmodel.searchResults.collectAsLazyPagingItems()
+        val searchResult = viewmodel.searchResults?.collectAsLazyPagingItems()
 
-        // didn`t find any other way to show error from pagination library only once.
-        // this approach causes bug: if same error happens more than once, snackbar shown only
-        // first time
-        // todo: should be fixed
-        val loadState = searchResult.loadState.refresh
-        if (loadState is LoadState.Error &&
-            loadState.error.message != viewmodel.error?.peekContent()?.message
-        ) {
-            LaunchedEffect(key1 = loadState) {
-                viewmodel.setError(loadState.error)
-            }
+        // bug: snackbar appears every time when we re-enter the screen
+        val loadState = searchResult?.loadState?.refresh
+        if (loadState is LoadState.Error) {
+            Event(loadState.error).ShowErrorSnackbar(scaffoldState = scaffoldState)
         }
 
         var searchBarState by rememberSaveable { mutableStateOf(SearchBarState.EMPTY) }
@@ -134,23 +122,19 @@ fun SearchScreen(
         Crossfade(
             targetState = when {
                 loadState is LoadState.Loading ->
-                    SearchResultState.LOADING
-                searchResult.itemCount == 0 &&
-                    searchBarState == SearchBarState.EMPTY &&
-                    viewmodel.trends is TrendsLoadingState.Loading ->
-                    SearchResultState.TRENDS_LOADING
-                searchResult.itemCount == 0 &&
-                    searchBarState == SearchBarState.EMPTY &&
-                    viewmodel.trends is TrendsLoadingState.Success ->
-                    SearchResultState.TRENDS
-                searchResult.itemCount == 0 &&
-                    searchBarState == SearchBarState.EMPTY &&
-                    viewmodel.trends is TrendsLoadingState.Error ->
-                    SearchResultState.TRENDS_FAILURE
-                searchResult.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
-                    SearchResultState.NOTHING_FOUND
+                    SearchScreenState.LOADING
+                searchResult != null && searchResult.itemCount > 0 ->
+                    SearchScreenState.RESULTS
+                searchBarState == SearchBarState.EMPTY &&
+                        viewmodel.trends is TrendsLoadingState.Success ->
+                    SearchScreenState.TRENDS
+                searchBarState == SearchBarState.EMPTY &&
+                        viewmodel.trends is TrendsLoadingState.Error ->
+                    SearchScreenState.HINT
+                searchResult?.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
+                    SearchScreenState.NOTHING_FOUND
                 else ->
-                    SearchResultState.RESULTS
+                    SearchScreenState.EMPTY_SCREEN
             }
         ) { state ->
             Box(
@@ -161,19 +145,19 @@ fun SearchScreen(
                     }
             ) {
                 when (state) {
-                    SearchResultState.LOADING -> {
+                    SearchScreenState.LOADING -> {
                         CircularProgressIndicator(Modifier.align(Alignment.Center))
                     }
-                    SearchResultState.TRENDS_LOADING -> {
+                    SearchScreenState.EMPTY_SCREEN -> {
                     }
-                    SearchResultState.TRENDS_FAILURE -> {
+                    SearchScreenState.HINT -> {
                         Text(
                             text = stringResource(id = R.string.type_to_start_searching),
                             modifier = Modifier.align(Alignment.Center),
                             fontWeight = FontWeight.Light
                         )
                     }
-                    SearchResultState.TRENDS -> {
+                    SearchScreenState.TRENDS -> {
                         val trends = (viewmodel.trends as? TrendsLoadingState.Success)?.data
                         if (trends != null) {
                             Column(
@@ -213,14 +197,14 @@ fun SearchScreen(
                             }
                         }
                     }
-                    SearchResultState.NOTHING_FOUND -> {
+                    SearchScreenState.NOTHING_FOUND -> {
                         Text(
                             text = stringResource(id = R.string.nothing_found),
                             modifier = Modifier.align(Alignment.Center),
                             fontWeight = FontWeight.Light
                         )
                     }
-                    SearchResultState.RESULTS -> {
+                    SearchScreenState.RESULTS -> {
                         val statusBarHeightDp = with(LocalDensity.current) {
                             statusBarHeightPx.toDp()
                         }
@@ -230,7 +214,9 @@ fun SearchScreen(
                                 top = toolbarHeight + statusBarHeightDp
                             ),
                         ) {
-                            items(searchResult) { item ->
+                            items(
+                                searchResult ?: error("searchResult is null")
+                            ) { item ->
                                 if (item != null) {
                                     TorrentCard(
                                         title = item.title,
@@ -294,6 +280,6 @@ fun SearchScreen(
     }
 }
 
-enum class SearchResultState {
-    LOADING, NOTHING_FOUND, RESULTS, TRENDS, TRENDS_LOADING, TRENDS_FAILURE
+enum class SearchScreenState {
+    LOADING, NOTHING_FOUND, RESULTS, TRENDS, EMPTY_SCREEN, HINT
 }

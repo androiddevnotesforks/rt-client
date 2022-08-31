@@ -59,7 +59,6 @@ class DetailsViewModel @AssistedInject constructor(
     private var toggleFavoriteJob: Job? = null
 
     init {
-        torrentDescription = null // clear previous result
         isFavorite = observeFavoritesUseCase()
             .map { favorites ->
                 favorites.any { favorite ->
