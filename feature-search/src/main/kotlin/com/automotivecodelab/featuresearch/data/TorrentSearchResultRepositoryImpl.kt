@@ -8,8 +8,10 @@ import com.automotivecodelab.featuresearch.domain.TorrentSearchResultRepository
 import com.automotivecodelab.featuresearch.domain.models.Order
 import com.automotivecodelab.featuresearch.domain.models.Sort
 import com.automotivecodelab.featuresearch.domain.models.TorrentSearchResult
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 
 const val NETWORK_PAGE_SIZE = 10
 
@@ -39,12 +41,18 @@ class TorrentSearchResultRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTrends(): Result<List<String>> {
-        var t: Throwable? = null
-        for (i in 0..2) {
+        val repeatCount = 3
+        repeat(repeatCount) { index ->
             runCatching { remoteDataSource.getTrends() }
                 .onSuccess { return Result.success(it) }
-                .onFailure { t = it }
+                .onFailure { t ->
+                    Timber.e(t)
+                    if (index == repeatCount - 1)
+                        return Result.failure(t)
+                    else
+                        delay(500)
+                }
         }
-        return Result.failure(t ?: RuntimeException())
+        error("Unreachable")
     }
 }
