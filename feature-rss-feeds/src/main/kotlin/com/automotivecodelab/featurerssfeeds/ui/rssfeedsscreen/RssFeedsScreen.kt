@@ -22,8 +22,6 @@ import com.automotivecodelab.coreui.ui.injectViewModel
 import com.automotivecodelab.featurerssfeeds.R
 import com.automotivecodelab.featurerssfeeds.di.DaggerRssFeedsComponent
 import com.automotivecodelab.featurerssfeeds.di.RssFeedsDeps
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -68,7 +66,7 @@ fun RssFeedsScreen(
                 Column {
                     Surface(
                         modifier = Modifier
-                            .statusBarsHeight()
+                            .windowInsetsTopHeight(WindowInsets.statusBars)
                             .fillMaxWidth(),
                         color = Color.Transparent,
                         elevation = 0.dp
@@ -166,7 +164,10 @@ fun RssFeedsScreen(
                             )
                         }
                         item {
-                            Spacer(modifier = Modifier.navigationBarsHeight())
+                            Spacer(
+                                modifier = Modifier
+                                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                            )
                         }
                     }
                 }

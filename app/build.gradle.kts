@@ -73,7 +73,6 @@ dependencies {
     implementation(libs.pagingCompose)
     implementation(libs.composeMaterial3)
     implementation(libs.accompanistSystemUiController)
-    implementation(libs.accompanistInsets)
     implementation(libs.accompanistNavigationAnimation)
     implementation(libs.accompanistNavigation)
 

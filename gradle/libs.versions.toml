@@ -42,7 +42,6 @@ room = { module = "androidx.room:room-runtime", version.ref = "room" }
 roomKapt = { module = "androidx.room:room-compiler", version.ref = "room" }
 roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-accompanistInsets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanistSystemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanistPlaceholder = { module = "com.google.accompanist:accompanist-placeholder", version.ref = "accompanist" }
 accompanistNavigationAnimation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }

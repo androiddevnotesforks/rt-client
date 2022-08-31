@@ -18,9 +18,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsHeight
 import kotlin.math.roundToInt
 
 @Composable
@@ -32,7 +29,7 @@ fun <T> ListWithCollapsingToolbar(
     navigationIcon: @Composable () -> Unit,
     isLoading: Boolean
 ) {
-    val statusBarHeightPx = LocalWindowInsets.current.statusBars.top.toFloat()
+    val statusBarHeightPx = WindowInsets.statusBars.getTop(LocalDensity.current).toFloat()
 
     val toolbarHeight = 56.dp
 
@@ -83,7 +80,10 @@ fun <T> ListWithCollapsingToolbar(
                         itemComposable(item)
                     }
                     item {
-                        Spacer(modifier = Modifier.navigationBarsHeight())
+                        Spacer(
+                            modifier = Modifier
+                                .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                        )
                     }
                 }
             }
@@ -100,7 +100,7 @@ fun <T> ListWithCollapsingToolbar(
         Column {
             Spacer(
                 modifier = Modifier
-                    .statusBarsHeight()
+                    .windowInsetsTopHeight(WindowInsets.statusBars)
                     .background(Color.Transparent)
             )
             TopAppBar(

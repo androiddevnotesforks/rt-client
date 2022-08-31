@@ -20,6 +20,5 @@ dependencies {
     implementation(libs.viewmodelCompose)
     // importing NoInternetConnectionException
     implementation(projects.coreNetwork)
-    implementation(libs.accompanistInsets)
     implementation(libs.accompanistSystemUiController)
 }

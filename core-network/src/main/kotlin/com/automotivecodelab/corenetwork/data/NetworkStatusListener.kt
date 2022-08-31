@@ -1,5 +1,6 @@
 package com.automotivecodelab.corenetwork.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -10,6 +11,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
+@SuppressLint("MissingPermission")
 class NetworkStatusListener @Inject constructor(context: Context) {
 
     var isNetworkAvailable = false

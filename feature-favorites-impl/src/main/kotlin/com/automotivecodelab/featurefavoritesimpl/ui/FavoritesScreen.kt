@@ -22,11 +22,8 @@ import com.automotivecodelab.coreui.ui.injectViewModel
 import com.automotivecodelab.featurefavoritesimpl.R
 import com.automotivecodelab.featurefavoritesimpl.di.DaggerFavoritesComponent
 import com.automotivecodelab.featurefavoritesimpl.di.FavoritesComponentDeps
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsHeight
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FavoritesScreen(
     onMenuItemClick: () -> Unit,
@@ -61,7 +58,7 @@ fun FavoritesScreen(
                 Column {
                     Surface(
                         modifier = Modifier
-                            .statusBarsHeight()
+                            .windowInsetsTopHeight(WindowInsets.statusBars)
                             .fillMaxWidth(),
                         color = Color.Transparent,
                         elevation = 0.dp
@@ -121,7 +118,10 @@ fun FavoritesScreen(
                             )
                         }
                         item {
-                            Spacer(modifier = Modifier.navigationBarsHeight())
+                            Spacer(
+                                modifier = Modifier
+                                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                            )
                         }
                     }
                 }

@@ -33,9 +33,6 @@ import com.automotivecodelab.coreui.ui.theme.DefaultPadding
 import com.automotivecodelab.featuresearch.R
 import com.automotivecodelab.featuresearch.di.DaggerSearchComponent
 import com.automotivecodelab.featuresearch.di.SearchComponentDeps
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import timber.log.Timber
@@ -76,7 +73,7 @@ fun SearchScreen(
     ) {
         val focusManager = LocalFocusManager.current
 
-        val statusBarHeightPx = LocalWindowInsets.current.statusBars.top.toFloat()
+        val statusBarHeightPx = WindowInsets.statusBars.getTop(LocalDensity.current).toFloat()
 
         val toolbarHeight = 56.dp /*material guidelines*/ + DefaultPadding * 2
 
@@ -260,7 +257,7 @@ fun SearchScreen(
                                 Spacer(
                                     Modifier
                                         .fillMaxWidth()
-                                        .navigationBarsHeight()
+                                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
                                 )
                             }
                         }

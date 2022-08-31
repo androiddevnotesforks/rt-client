@@ -38,7 +38,6 @@ dependencies {
     apolloMetadata(projects.coreNetwork)
     implementation(projects.coreNetwork)
     implementation(libs.activityCompose)
-    implementation(libs.accompanistInsets)
     implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistPermissions)
     implementation(libs.timber)

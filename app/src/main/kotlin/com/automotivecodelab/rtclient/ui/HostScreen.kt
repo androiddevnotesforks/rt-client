@@ -6,7 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -24,8 +24,6 @@ import com.automotivecodelab.coreui.ui.SnackbarWithInsets
 import com.automotivecodelab.coreui.ui.theme.DefaultCornerRadius
 import com.automotivecodelab.coreui.ui.theme.RTClientTheme
 import com.automotivecodelab.rtclient.appComponent
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.*
@@ -103,7 +101,7 @@ fun HostScreen(
                     bottomEnd = DefaultCornerRadius
                 ),
                 drawerContent = {
-                    Spacer(modifier = Modifier.statusBarsHeight())
+                    Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
                     DrawerItem(
                         painter = painterResource(id = Screen.Search.icon!!),
                         text = stringResource(id = Screen.Search.label!!),
@@ -166,7 +164,10 @@ fun HostScreen(
                     ThemeSelector(theme = theme, onThemeChanged = {
                         scope.launch { themeStore.saveTheme(it) }
                     })
-                    Spacer(modifier = Modifier.navigationBarsHeight())
+                    Spacer(
+                        modifier = Modifier
+                            .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                    )
                 }
             ) {
                 ModalBottomSheetLayout(

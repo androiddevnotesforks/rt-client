@@ -40,7 +40,6 @@ dependencies {
     implementation(libs.pagingCompose)
     implementation(libs.timber)
     implementation(libs.activityCompose)
-    implementation(libs.accompanistInsets)
     implementation(libs.accompanistSystemUiController)
 
     // ===dagger===

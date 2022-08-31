@@ -34,8 +34,6 @@ import com.automotivecodelab.featuredetails.di.DaggerDetailsComponent
 import com.automotivecodelab.featuredetails.di.DetailsComponentDeps
 import com.automotivecodelab.featuredetails.domain.models.SDUIFontWeight
 import com.automotivecodelab.featuredetails.domain.models.SDUITextModel
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +107,7 @@ fun TorrentDetails(
             verticalArrangement = Arrangement.spacedBy(DefaultPadding),
             content = {
                 item {
-                    Spacer(modifier = Modifier.statusBarsHeight())
+                    Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
                 }
                 val torrentDescription = viewModel.torrentDescription
                 if (torrentDescription != null) {
@@ -301,7 +299,11 @@ fun TorrentDetails(
                             Text(text = stringResource(id = R.string.open_in_browser))
                         }
                     }
-                    item { Spacer(modifier = Modifier.navigationBarsHeight()) }
+                    item { Spacer(
+                        modifier = Modifier
+                            .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                        )
+                    }
                 }
             }
         )

@@ -28,7 +28,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.activityCompose)
     implementation(libs.junit)
-    implementation(libs.accompanistInsets)
 
     // ===dagger===
     implementation(libs.dagger)

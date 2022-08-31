@@ -18,7 +18,6 @@ import androidx.core.view.WindowCompat
 import com.automotivecodelab.coreui.ui.Event
 import com.automotivecodelab.rtclient.MyFirebaseMessagingService
 import com.automotivecodelab.rtclient.R
-import com.google.accompanist.insets.ProvideWindowInsets
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -37,9 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            ProvideWindowInsets {
-                HostScreen(deepLinkEvent)
-            }
+            HostScreen(deepLinkEvent)
         }
         // safe to call repeatedly as docs said
         createNotificationChannel()
