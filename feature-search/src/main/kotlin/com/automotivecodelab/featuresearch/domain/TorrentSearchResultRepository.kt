@@ -10,7 +10,8 @@ interface TorrentSearchResultRepository {
     fun getSearchResultStream(
         query: String,
         sort: Sort,
-        order: Order
+        order: Order,
+        feed: String?
     ): Flow<PagingData<TorrentSearchResult>>
     suspend fun getSearchSuggestions(query: String): Result<List<String>>
     suspend fun getTrends(): Result<List<String>>

@@ -1,11 +1,25 @@
 query SearchQuery(
-    $query: String!, $sort: String!, $order: String!, $startIndex: Int!, $endIndex: Int!) {
+    $query: String!,
+    $sort: String!,
+    $order: String!,
+    $feed: String,
+    $startIndex: Int!,
+    $endIndex: Int!
+) {
     search(
-        query: $query, sort: $sort, order: $order, startIndex: $startIndex, endIndex: $endIndex) {
+        query: $query,
+        sort: $sort,
+        order: $order,
+        feed: $feed,
+        startIndex:
+        $startIndex,
+        endIndex: $endIndex
+    ) {
         torrents {
             id
             title
             category
+            categoryId
             author
             size
             seeds

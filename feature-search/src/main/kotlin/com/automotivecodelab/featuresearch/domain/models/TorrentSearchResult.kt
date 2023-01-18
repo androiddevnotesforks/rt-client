@@ -7,6 +7,7 @@ data class TorrentSearchResult(
     val title: String,
     val author: String,
     val category: String,
+    val categoryId: String,
     val size: Long,
     val formattedSize: String,
     val seeds: Int,

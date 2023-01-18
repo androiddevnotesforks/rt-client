@@ -13,8 +13,14 @@ class SearchTorrentsUseCase @Inject constructor(
     operator fun invoke(
         query: String,
         sort: Sort,
-        order: Order
+        order: Order,
+        feed: String?
     ): Flow<PagingData<TorrentSearchResult>> {
-        return repository.getSearchResultStream(query, sort, order)
+        return repository.getSearchResultStream(
+            query = query,
+            sort = sort,
+            order = order,
+            feed = feed
+        )
     }
 }

@@ -52,6 +52,7 @@ class DetailsViewModel @AssistedInject constructor(
         private set
 
     var requestFilesystemPermissionEvent by mutableStateOf<Event<Unit>?>(null)
+        private set
 
     var error by mutableStateOf<Event<Throwable>?>(null)
         private set

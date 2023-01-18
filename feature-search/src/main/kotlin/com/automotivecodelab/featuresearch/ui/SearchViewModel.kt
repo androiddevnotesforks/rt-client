@@ -44,6 +44,9 @@ class SearchViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
+    var feedIdWithTitle by mutableStateOf<Pair<String, String>?>(null)
+        private set
+
     @ExperimentalCoroutinesApi
     @FlowPreview
     val searchSuggestions = _query
@@ -69,6 +72,7 @@ class SearchViewModel @Inject constructor(
         private set
 
     fun onQueryChange(query: String) {
+        feedIdWithTitle = null
         viewModelScope.launch {
             _query.value = query
         }
@@ -90,8 +94,18 @@ class SearchViewModel @Inject constructor(
 
     fun search() {
         if (_query.value.isNotEmpty()) {
-            searchResults = searchTorrentsUseCase(_query.value, sort, order)
+            searchResults = searchTorrentsUseCase(
+                query = _query.value,
+                sort = sort,
+                order = order,
+                feed = feedIdWithTitle?.first
+            )
                 .cachedIn(viewModelScope)
         }
+    }
+
+    fun onFeedSelected(feedId: String, feedTitle: String) {
+        feedIdWithTitle = feedId to feedTitle
+        search()
     }
 }

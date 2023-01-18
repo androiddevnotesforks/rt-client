@@ -22,14 +22,21 @@ class TorrentSearchResultRepositoryImpl @Inject constructor(
     override fun getSearchResultStream(
         query: String,
         sort: Sort,
-        order: Order
+        order: Order,
+        feed: String?
     ): Flow<PagingData<TorrentSearchResult>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
             ),
             pagingSourceFactory = {
-                TorrentSearchResultPagingSource(remoteDataSource, query, sort, order)
+                TorrentSearchResultPagingSource(
+                    torrentsRemoteDataSource = remoteDataSource,
+                    query = query,
+                    sort = sort,
+                    order = order,
+                    feed = feed
+                )
             }
         ).flow
     }

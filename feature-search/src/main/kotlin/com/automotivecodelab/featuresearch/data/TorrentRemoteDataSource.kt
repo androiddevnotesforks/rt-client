@@ -1,6 +1,7 @@
 package com.automotivecodelab.featuresearch.data
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.automotivecodelab.featuresearch.SearchQuery
 import com.automotivecodelab.featuresearch.SearchSuggestionsQuery
 import com.automotivecodelab.featuresearch.TrendingSearchesQuery
@@ -15,6 +16,7 @@ interface TorrentSearchRemoteDataSource {
         query: String,
         sort: Sort,
         order: Order,
+        feed: String?,
         startIndex: Int,
         endIndex: Int
     ): List<TorrentSearchResult>
@@ -30,11 +32,19 @@ class TorrentsRemoteDataSourceImpl @Inject constructor(
         query: String,
         sort: Sort,
         order: Order,
+        feed: String?,
         startIndex: Int,
         endIndex: Int
     ): List<TorrentSearchResult> {
         val response = graphqlClient.query(
-            SearchQuery(query, sort.value, order.value, startIndex, endIndex)
+            SearchQuery(
+                query = query,
+                sort = sort.value,
+                feed = Optional.presentIfNotNull(feed),
+                order = order.value,
+                startIndex = startIndex,
+                endIndex = endIndex
+            )
         ).execute()
         return response.dataAssertNoErrors.search.torrents.map {
             TorrentSearchResult(
@@ -42,6 +52,7 @@ class TorrentsRemoteDataSourceImpl @Inject constructor(
                 title = it.title,
                 author = it.author,
                 category = it.category,
+                categoryId = it.categoryId,
                 size = it.size.toLong(),
                 downloads = it.downloads,
                 formattedSize = it.formattedSize,

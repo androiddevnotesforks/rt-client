@@ -238,7 +238,13 @@ fun SearchScreen(
                                         // 3. favorites.first() will be reacting to changes only
                                         // after data reload
                                         isFavorite = viewmodel.favorites.collectAsState().value
-                                            .any { it.torrentId == item.id }
+                                            .any { it.torrentId == item.id },
+                                        onClickCategory = {
+                                            viewmodel.onFeedSelected(
+                                                feedId = item.categoryId,
+                                                feedTitle = item.category
+                                            )
+                                        }
                                     ) {
                                         focusManager.clearFocus()
                                         Timber.d(item.toString())

@@ -1,6 +1,7 @@
 type Torrent {
     id: String!
-    category: String!
+    category: String!,
+    categoryId: String!,
     title: String!
     author: String!
     size: Float!
@@ -34,7 +35,7 @@ type RssChannelEntry {
 }
 
 type Query {
-    search(query: String!, sort: String!, order: String!, startIndex: Int!, endIndex: Int!): SearchResult!
+    search(query: String!, sort: String!, order: String!, feed: String, startIndex: Int!, endIndex: Int!): SearchResult!
     magnetLink(id: String!): String!
     getRss(threadId: String!): RssChannel!
     getSearchSuggestions(query: String!): [String!]!

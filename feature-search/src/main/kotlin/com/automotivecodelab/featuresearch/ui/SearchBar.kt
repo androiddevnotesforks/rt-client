@@ -121,6 +121,18 @@ fun SearchBar(
                 }),
                 placeholder = { Text(stringResource(id = R.string.search)) }
             )
+            val feedTitle = viewModel.feedIdWithTitle?.second
+            if (feedTitle != null && searchBarState == SearchBarState.WITH_QUERY) {
+                val contentColor = MaterialTheme.colors.onSurface.copy(
+                    alpha = TextFieldDefaults.IconOpacity
+                )
+                Text(
+                    modifier = Modifier.padding(DefaultPadding),
+                    text = feedTitle,
+                    style = MaterialTheme.typography.caption,
+                    color = contentColor
+                )
+            }
             val chipRowLazyListState = rememberLazyListState()
             val suggestions = viewModel.searchSuggestions.collectAsState()
             if (searchBarState == SearchBarState.EXPANDED) {

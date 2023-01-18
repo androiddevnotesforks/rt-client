@@ -23,7 +23,8 @@ fun TorrentCard(
     seeds: Int?,
     leeches: Int?,
     isFavorite: Boolean?,
-    onClick: () -> Unit
+    onClickCategory: (() -> Unit)? = null,
+    onClick: () -> Unit,
 ) {
 
     Surface(
@@ -41,7 +42,16 @@ fun TorrentCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(category ?: author, style = MaterialTheme.typography.caption)
+                if (onClickCategory != null) {
+                    Text(
+                        modifier = Modifier.clickable { onClickCategory() },
+                        text = category!!,
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.primary
+                    )
+                } else {
+                    Text(category ?: author, style = MaterialTheme.typography.caption)
+                }
                 if (isFavorite == true) {
                     Icon(
                         modifier = Modifier.size(18.dp),
