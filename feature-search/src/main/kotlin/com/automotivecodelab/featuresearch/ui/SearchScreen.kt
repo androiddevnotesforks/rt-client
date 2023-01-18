@@ -35,7 +35,6 @@ import com.automotivecodelab.featuresearch.di.DaggerSearchComponent
 import com.automotivecodelab.featuresearch.di.SearchComponentDeps
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import timber.log.Timber
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalAnimationApi
@@ -73,6 +72,13 @@ fun SearchScreen(
     ) {
         val focusManager = LocalFocusManager.current
 
+        LaunchedEffect(key1 = viewmodel.needClearFocus, block = {
+            if (viewmodel.needClearFocus) {
+                focusManager.clearFocus()
+                viewmodel.onFocusCleared()
+            }
+        })
+
         val statusBarHeightPx = WindowInsets.statusBars.getTop(LocalDensity.current).toFloat()
 
         val toolbarHeight = 56.dp /*material guidelines*/ + DefaultPadding * 2
@@ -94,7 +100,7 @@ fun SearchScreen(
                     available: Offset,
                     source: NestedScrollSource
                 ): Offset {
-                    focusManager.clearFocus()
+                    viewmodel.onScroll()
                     val delta = consumed.y
                     val newOffset = toolbarOffsetHeightPx.value + delta
                     toolbarOffsetHeightPx.value = newOffset.coerceIn(
@@ -114,94 +120,77 @@ fun SearchScreen(
             Event(loadState.error).ShowErrorSnackbar(scaffoldState = scaffoldState)
         }
 
-        var searchBarState by rememberSaveable { mutableStateOf(SearchBarState.EMPTY) }
+        LaunchedEffect(key1 = loadState, key2 = searchResult) {
+            when {
+                loadState is LoadState.Loading ->
+                    viewmodel.onLoading()
+                searchResult != null && searchResult.itemCount > 0 ->
+                    viewmodel.onResultsAvailable()
+                searchResult?.itemCount == 0 ->
+                    viewmodel.onNothingFound()
+            }
+        }
 
         Crossfade(
-            targetState = when {
-                loadState is LoadState.Loading ->
-                    SearchScreenState.LOADING
-                searchResult != null && searchResult.itemCount > 0 ->
-                    SearchScreenState.RESULTS
-                searchBarState == SearchBarState.EMPTY &&
-                        viewmodel.trends is TrendsLoadingState.Success ->
-                    SearchScreenState.TRENDS
-                searchBarState == SearchBarState.EMPTY &&
-                        viewmodel.trends is TrendsLoadingState.Error ->
-                    SearchScreenState.HINT
-                searchResult?.itemCount == 0 && searchBarState == SearchBarState.WITH_QUERY ->
-                    SearchScreenState.NOTHING_FOUND
-                else ->
-                    SearchScreenState.EMPTY_SCREEN
-            }
+            modifier = Modifier
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { viewmodel.clearFocus() })
+                },
+            targetState = viewmodel.searchScreenState
         ) { state ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectTapGestures(onTap = { focusManager.clearFocus() })
-                    }
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 when (state) {
-                    SearchScreenState.LOADING -> {
+                    is SearchScreenState.Loading -> {
                         CircularProgressIndicator(Modifier.align(Alignment.Center))
                     }
-                    SearchScreenState.EMPTY_SCREEN -> {
-                    }
-                    SearchScreenState.HINT -> {
+                    is SearchScreenState.EmptyScreen -> {  }
+                    is SearchScreenState.Hint -> {
                         Text(
                             text = stringResource(id = R.string.type_to_start_searching),
                             modifier = Modifier.align(Alignment.Center),
                             fontWeight = FontWeight.Light
                         )
                     }
-                    SearchScreenState.TRENDS -> {
-                        val trends = (viewmodel.trends as? TrendsLoadingState.Success)?.data
-                        if (trends != null) {
-                            Column(
-                                modifier = Modifier.align(Alignment.Center),
-                                verticalArrangement = Arrangement.spacedBy(DefaultPadding),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                    is SearchScreenState.Trends -> {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            verticalArrangement = Arrangement.spacedBy(DefaultPadding),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (LocalConfiguration.current.orientation ==
+                                Configuration.ORIENTATION_LANDSCAPE
                             ) {
-                                if (LocalConfiguration.current.orientation ==
-                                    Configuration.ORIENTATION_LANDSCAPE
-                                ) {
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(toolbarHeight)
-                                            .statusBarsPadding()
-                                    )
-                                } else {
-                                    Text(
-                                        text = stringResource(id = R.string.trendingQueries),
-                                        fontWeight = FontWeight.Light
-                                    )
-                                    Spacer(
-                                        modifier = Modifier.height(DefaultPadding)
-                                    )
-                                }
-                                trends.forEach {
-                                    Text(
-                                        text = it,
-                                        fontWeight = FontWeight.Light,
-                                        modifier = Modifier
-                                            .clickable {
-                                                viewmodel.onQueryChange(it)
-                                                viewmodel.search()
-                                                searchBarState = SearchBarState.WITH_QUERY
-                                            }
-                                    )
-                                }
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(toolbarHeight)
+                                        .statusBarsPadding()
+                                )
+                            } else {
+                                Text(
+                                    text = stringResource(id = R.string.trendingQueries),
+                                    fontWeight = FontWeight.Light
+                                )
+                                Spacer(
+                                    modifier = Modifier.height(DefaultPadding)
+                                )
+                            }
+                            state.trends.forEach {
+                                Text(
+                                    text = it,
+                                    fontWeight = FontWeight.Light,
+                                    modifier = Modifier.clickable { viewmodel.onTrendClicked(it) }
+                                )
                             }
                         }
                     }
-                    SearchScreenState.NOTHING_FOUND -> {
+                    SearchScreenState.NothingFound -> {
                         Text(
                             text = stringResource(id = R.string.nothing_found),
                             modifier = Modifier.align(Alignment.Center),
                             fontWeight = FontWeight.Light
                         )
                     }
-                    SearchScreenState.RESULTS -> {
+                    SearchScreenState.Results -> {
                         val statusBarHeightDp = with(LocalDensity.current) {
                             statusBarHeightPx.toDp()
                         }
@@ -246,8 +235,7 @@ fun SearchScreen(
                                             )
                                         }
                                     ) {
-                                        focusManager.clearFocus()
-                                        Timber.d(item.toString())
+                                        viewmodel.clearFocus()
                                         openDetails(
                                             item.id,
                                             item.category,
@@ -274,15 +262,9 @@ fun SearchScreen(
 
         SearchBar(
             toolbarOffsetHeightPx = toolbarOffsetHeightPx,
-            searchBarState = searchBarState,
-            onSearchBarStateChange = { searchBarState = it },
             viewModel = viewmodel,
             onMenuItemClick = onMenuItemClick,
-            clearFocus = { focusManager.clearFocus() }
         )
     }
 }
 
-enum class SearchScreenState {
-    LOADING, NOTHING_FOUND, RESULTS, TRENDS, EMPTY_SCREEN, HINT
-}

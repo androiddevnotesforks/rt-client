@@ -35,11 +35,8 @@ import kotlinx.coroutines.FlowPreview
 @Composable
 fun SearchBar(
     toolbarOffsetHeightPx: State<Float>, // when passing a pure float, scroll is freezing
-    searchBarState: SearchBarState,
-    onSearchBarStateChange: (SearchBarState) -> Unit,
     viewModel: SearchViewModel,
-    onMenuItemClick: () -> Unit,
-    clearFocus: () -> Unit
+    onMenuItemClick: () -> Unit
 ) {
     Surface(
         elevation = 4.dp, // top bar material design
@@ -49,16 +46,11 @@ fun SearchBar(
             .padding(DefaultPadding)
             .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.toInt()) }
     ) {
-        val query = viewModel.query.collectAsState()
-        Column(
-            modifier = Modifier.animateContentSize()
-        ) {
+        Column(modifier = Modifier.animateContentSize()) {
+            val query = viewModel.query.collectAsState()
             TextField(
                 value = query.value,
-                onValueChange = {
-                    if (searchBarState == SearchBarState.EXPANDED)
-                        viewModel.onQueryChange(it)
-                },
+                onValueChange = { viewModel.onQueryChange(it) },
                 leadingIcon = {
                     IconButton(onClick = onMenuItemClick) {
                         Icon(
@@ -68,21 +60,10 @@ fun SearchBar(
                     }
                 },
                 trailingIcon = {
-                    if (query.value.isNotEmpty()) {
-                        IconButton(onClick = {
-                            when (searchBarState) {
-                                SearchBarState.EXPANDED -> {
-                                    clearFocus()
-                                    onSearchBarStateChange(SearchBarState.WITH_QUERY)
-                                }
-                                SearchBarState.WITH_QUERY -> {
-                                    viewModel.onQueryChange("")
-                                    clearFocus()
-                                    onSearchBarStateChange(SearchBarState.EMPTY)
-                                }
-                                else -> {}
-                            }
-                        }) {
+                    if (viewModel.searchBarState == SearchBarState.EXPANDED ||
+                        viewModel.searchBarState == SearchBarState.WITH_QUERY
+                    ) {
+                        IconButton(onClick = { viewModel.onSearchBarCloseIconClicked() }) {
                             Icon(
                                 Icons.Filled.Clear,
                                 "Clear",
@@ -96,33 +77,19 @@ fun SearchBar(
                     unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = Modifier
-                    .onFocusChanged {
-                        val newSearchBarState = when {
-                            it.isFocused -> {
-                                SearchBarState.EXPANDED
-                            }
-                            query.value.isEmpty() -> {
-                                clearFocus()
-                                SearchBarState.EMPTY
-                            }
-                            else -> {
-                                clearFocus()
-                                SearchBarState.WITH_QUERY
-                            }
-                        }
-                        onSearchBarStateChange(newSearchBarState)
+                    .onFocusChanged { focusState ->
+                        viewModel.onSearchBarFocusChanged(focusState.isFocused)
                     }
                     .fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = {
-                    clearFocus()
-                    viewModel.search()
-                }),
+                keyboardActions = KeyboardActions(
+                    onSearch = { viewModel.onKeyboardSearchButtonClicked() }
+                ),
                 placeholder = { Text(stringResource(id = R.string.search)) }
             )
             val feedTitle = viewModel.feedIdWithTitle?.second
-            if (feedTitle != null && searchBarState == SearchBarState.WITH_QUERY) {
+            if (feedTitle != null) {
                 val contentColor = MaterialTheme.colors.onSurface.copy(
                     alpha = TextFieldDefaults.IconOpacity
                 )
@@ -135,7 +102,7 @@ fun SearchBar(
             }
             val chipRowLazyListState = rememberLazyListState()
             val suggestions = viewModel.searchSuggestions.collectAsState()
-            if (searchBarState == SearchBarState.EXPANDED) {
+            if (viewModel.searchBarState == SearchBarState.EXPANDED) {
                 ChipRow(
                     currentSort = viewModel.sort,
                     currentOrder = viewModel.order,
@@ -184,17 +151,11 @@ fun SearchBar(
                         // surface for hover effect
                         Surface(
                             modifier = Modifier
-                                .clickable {
-                                    clearFocus()
-                                    viewModel.onQueryChange(suggestion)
-                                    viewModel.search()
-                                }
+                                .clickable { viewModel.onSuggestionClicked(suggestion) }
                                 .fillMaxWidth()
                                 .padding(DefaultPadding)
                         ) {
-                            Text(
-                                text = str
-                            )
+                            Text(text = str)
                         }
                     }
                 }
@@ -203,6 +164,3 @@ fun SearchBar(
     }
 }
 
-enum class SearchBarState {
-    EMPTY, EXPANDED, WITH_QUERY
-}
