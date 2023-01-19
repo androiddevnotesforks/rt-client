@@ -16,7 +16,7 @@ interface TorrentSearchRemoteDataSource {
         query: String,
         sort: Sort,
         order: Order,
-        feed: String?,
+        feeds: List<String>?,
         startIndex: Int,
         endIndex: Int
     ): List<TorrentSearchResult>
@@ -32,7 +32,7 @@ class TorrentsRemoteDataSourceImpl @Inject constructor(
         query: String,
         sort: Sort,
         order: Order,
-        feed: String?,
+        feeds: List<String>?,
         startIndex: Int,
         endIndex: Int
     ): List<TorrentSearchResult> {
@@ -40,7 +40,7 @@ class TorrentsRemoteDataSourceImpl @Inject constructor(
             SearchQuery(
                 query = query,
                 sort = sort.value,
-                feed = Optional.presentIfNotNull(feed),
+                feeds = Optional.presentIfNotNull(feeds),
                 order = order.value,
                 startIndex = startIndex,
                 endIndex = endIndex

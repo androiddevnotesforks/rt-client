@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.automotivecodelab.coreui.ui.theme.DefaultPadding
 import com.automotivecodelab.featurefavoritesapi.Favorite
 import com.automotivecodelab.featurefavoritesapi.ObserveFavoritesUseCase
 import com.automotivecodelab.featuresearch.domain.GetSearchSuggestionsUseCase
@@ -30,8 +31,8 @@ class SearchViewModel @Inject constructor(
     var searchScreenState by mutableStateOf<SearchScreenState>(SearchScreenState.EmptyScreen)
         private set
 
-    var searchBarState by mutableStateOf(SearchBarState.EMPTY)
-        private set
+    private val _searchBarState = MutableStateFlow(SearchBarState.COLLAPSED)
+    val searchBarState = _searchBarState.asStateFlow()
 
     val favorites: StateFlow<List<Favorite>> = observeFavoritesUseCase()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -41,27 +42,14 @@ class SearchViewModel @Inject constructor(
 
     private var trends: List<String>? = null
 
-    init {
-        viewModelScope.launch {
-            getTrendsUseCase()
-                .onSuccess {
-                    if (searchBarState == SearchBarState.EMPTY) {
-                        trends = it
-                        searchScreenState = SearchScreenState.Trends(it)
-                    }
-                }
-                .onFailure {
-                    if (searchBarState == SearchBarState.EMPTY) {
-                        searchScreenState = SearchScreenState.Hint
-                    }
-                }
-        }
-    }
-
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
-    var feedIdWithTitle by mutableStateOf<Pair<String, String>?>(null)
+    var feedsIdWithTitle = mutableStateListOf<Pair<String, String>>()
+
+    private var defaultSearchBarHeightValue = SearchBarHeight + DefaultPadding * 2
+
+    var searchBarHeight by mutableStateOf(defaultSearchBarHeightValue)
         private set
 
     @ExperimentalCoroutinesApi
@@ -88,8 +76,39 @@ class SearchViewModel @Inject constructor(
     var order by mutableStateOf(Order.Desc)
         private set
 
+    init {
+        viewModelScope.launch {
+            listOf(
+                async {
+                    getTrendsUseCase()
+                        .onSuccess {
+                            if (query.value.isEmpty()) {
+                                trends = it
+                                searchScreenState = SearchScreenState.Trends(it)
+                            }
+                        }
+                        .onFailure {
+                            if (query.value.isEmpty()) {
+                                searchScreenState = SearchScreenState.Hint
+                            }
+                        }
+                },
+                async {
+                    searchBarState.collect {
+                        when (it) {
+                            SearchBarState.COLLAPSED ->
+                                searchBarHeight = defaultSearchBarHeightValue
+                            SearchBarState.WITH_FEED ->
+                                searchBarHeight = defaultSearchBarHeightValue + FeedLabelHeight
+                            else -> {}
+                        }
+                    }
+                }
+            ).awaitAll()
+        }
+    }
+
     fun onQueryChange(query: String) {
-        feedIdWithTitle = null
         _query.value = query
     }
 
@@ -107,15 +126,27 @@ class SearchViewModel @Inject constructor(
         search()
     }
 
-    fun onFeedSelected(feedId: String, feedTitle: String) {
-        if (searchBarState == SearchBarState.WITH_QUERY && feedIdWithTitle == null) {
-            feedIdWithTitle = feedId to feedTitle
+    fun addFeed(feedId: String, feedTitle: String) {
+        if (query.value.isNotEmpty() && feedsIdWithTitle.all { it.first != feedId }) {
+            feedsIdWithTitle.add(feedId to feedTitle)
+            if (searchBarState.value == SearchBarState.COLLAPSED) {
+                _searchBarState.value = SearchBarState.WITH_FEED
+            }
             search()
         }
     }
 
+    fun removeFeed(feedId: String) {
+        feedsIdWithTitle.removeAll { it.first == feedId }
+        if (feedsIdWithTitle.isEmpty() && searchBarState.value == SearchBarState.WITH_FEED) {
+            _searchBarState.value = SearchBarState.COLLAPSED
+        }
+        search()
+    }
+
     fun onLoading() {
-        searchScreenState = SearchScreenState.Loading
+        // isNotEmpty() for handling screen rotation
+        if (query.value.isNotEmpty()) searchScreenState = SearchScreenState.Loading
     }
 
     fun onResultsAvailable() {
@@ -123,28 +154,36 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onNothingFound() {
-        searchScreenState = SearchScreenState.NothingFound
+        // isNotEmpty() for handling screen rotation
+        if (query.value.isNotEmpty()) searchScreenState = SearchScreenState.NothingFound
     }
 
     fun onTrendClicked(trendValue: String) {
-        searchBarState = SearchBarState.WITH_QUERY
         _query.value = trendValue
         search()
     }
 
     fun onSearchBarCloseIconClicked() {
-        if (searchBarState == SearchBarState.EXPANDED) {
+        if (searchBarState.value == SearchBarState.EXPANDED) {
             needClearFocus = true
         }
         else {
-            searchBarState = SearchBarState.EMPTY
             onQueryChange("")
+            if (searchScreenState is SearchScreenState.NothingFound) {
+                val _trends = trends
+                searchScreenState = if (_trends != null)
+                    SearchScreenState.Trends(_trends)
+                else
+                    SearchScreenState.Hint
+            }
+            feedsIdWithTitle.clear()
+            _searchBarState.value = SearchBarState.COLLAPSED
         }
     }
 
     fun onSearchBarFocusChanged(isFocused: Boolean) {
         when  {
-            searchBarState == SearchBarState.EXPANDED && !isFocused -> {
+            searchBarState.value == SearchBarState.EXPANDED && !isFocused -> {
                 if (searchScreenState is SearchScreenState.EmptyScreen) {
                     val _trends = trends
                     searchScreenState = if (_trends != null)
@@ -152,15 +191,15 @@ class SearchViewModel @Inject constructor(
                     else
                         SearchScreenState.Hint
                 }
-                searchBarState = if (query.value.isEmpty())
-                    SearchBarState.EMPTY
+                _searchBarState.value = if (feedsIdWithTitle.isNotEmpty())
+                    SearchBarState.WITH_FEED
                 else
-                    SearchBarState.WITH_QUERY
+                    SearchBarState.COLLAPSED
             }
-            searchBarState != SearchBarState.EXPANDED && isFocused -> {
+            searchBarState.value != SearchBarState.EXPANDED && isFocused -> {
                 if (searchScreenState !is SearchScreenState.Results)
                     searchScreenState = SearchScreenState.EmptyScreen
-                searchBarState = SearchBarState.EXPANDED
+                _searchBarState.value = SearchBarState.EXPANDED
             }
         }
     }
@@ -185,7 +224,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onScroll() {
-        if (searchBarState == SearchBarState.EXPANDED) {
+        if (searchBarState.value == SearchBarState.EXPANDED) {
             needClearFocus = true
         }
     }
@@ -196,7 +235,7 @@ class SearchViewModel @Inject constructor(
                 query = _query.value,
                 sort = sort,
                 order = order,
-                feed = feedIdWithTitle?.first
+                feeds = feedsIdWithTitle.map { it.first }
             )
                 .cachedIn(viewModelScope)
         }
@@ -213,5 +252,5 @@ sealed class SearchScreenState {
 }
 
 enum class SearchBarState {
-    EMPTY, EXPANDED, WITH_QUERY
+    COLLAPSED, EXPANDED, WITH_FEED
 }

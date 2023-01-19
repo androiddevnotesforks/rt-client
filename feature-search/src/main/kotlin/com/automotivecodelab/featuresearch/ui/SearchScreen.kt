@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,7 +23,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -81,19 +79,17 @@ fun SearchScreen(
 
         val statusBarHeightPx = WindowInsets.statusBars.getTop(LocalDensity.current).toFloat()
 
-        val toolbarHeight = 56.dp /*material guidelines*/ + DefaultPadding * 2
-
         // scrolling of search bar and lazy list is uncoordinated when using int instead of
         // float
         val toolbarHeightPx = with(LocalDensity.current) {
-            toolbarHeight.toPx()
+            viewmodel.searchBarHeight.toPx()
         }
 
-        val toolbarOffsetHeightPx = rememberSaveable {
+        val toolbarOffsetHeightPx = remember {
             mutableStateOf(statusBarHeightPx)
         }
 
-        val nestedScrollConnection = remember {
+        val nestedScrollConnection = remember(toolbarHeightPx) {
             object : NestedScrollConnection {
                 override fun onPostScroll(
                     consumed: Offset,
@@ -162,7 +158,11 @@ fun SearchScreen(
                             ) {
                                 Spacer(
                                     modifier = Modifier
-                                        .height(toolbarHeight)
+                                        .height(
+                                            animateDpAsState(
+                                                targetValue = viewmodel.searchBarHeight
+                                            ).value
+                                        )
                                         .statusBarsPadding()
                                 )
                             } else {
@@ -175,10 +175,12 @@ fun SearchScreen(
                                 )
                             }
                             state.trends.forEach {
-                                Text(
+                                TextWithUnderlineOnPress(
                                     text = it,
                                     fontWeight = FontWeight.Light,
-                                    modifier = Modifier.clickable { viewmodel.onTrendClicked(it) }
+                                    onClick = {
+                                        viewmodel.onTrendClicked(it)
+                                    }
                                 )
                             }
                         }
@@ -194,12 +196,14 @@ fun SearchScreen(
                         val statusBarHeightDp = with(LocalDensity.current) {
                             statusBarHeightPx.toDp()
                         }
-                        LazyColumn(
-                            modifier = Modifier.nestedScroll(nestedScrollConnection),
-                            contentPadding = PaddingValues(
-                                top = toolbarHeight + statusBarHeightDp
-                            ),
-                        ) {
+                        LazyColumn(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
+                            item {
+                                Spacer(modifier = Modifier.height(
+                                    animateDpAsState(
+                                        targetValue = viewmodel.searchBarHeight + statusBarHeightDp
+                                    ).value
+                                ))
+                            }
                             items(
                                 searchResult ?: error("searchResult is null")
                             ) { item ->
@@ -229,7 +233,8 @@ fun SearchScreen(
                                         isFavorite = viewmodel.favorites.collectAsState().value
                                             .any { it.torrentId == item.id },
                                         onClickCategory = {
-                                            viewmodel.onFeedSelected(
+                                            toolbarOffsetHeightPx.value = statusBarHeightPx
+                                            viewmodel.addFeed(
                                                 feedId = item.categoryId,
                                                 feedTitle = item.category
                                             )

@@ -23,7 +23,7 @@ class TorrentSearchResultRepositoryImpl @Inject constructor(
         query: String,
         sort: Sort,
         order: Order,
-        feed: String?
+        feeds: List<String>?,
     ): Flow<PagingData<TorrentSearchResult>> {
         return Pager(
             config = PagingConfig(
@@ -35,7 +35,7 @@ class TorrentSearchResultRepositoryImpl @Inject constructor(
                     query = query,
                     sort = sort,
                     order = order,
-                    feed = feed
+                    feeds = feeds
                 )
             }
         ).flow

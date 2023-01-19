@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.automotivecodelab.coreui.R
 import com.automotivecodelab.coreui.ui.theme.DefaultPadding
@@ -43,11 +42,11 @@ fun TorrentCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (onClickCategory != null) {
-                    Text(
-                        modifier = Modifier.clickable { onClickCategory() },
+                    TextWithUnderlineOnPress(
                         text = category!!,
+                        color = MaterialTheme.colors.primary,
                         style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.primary
+                        onClick = onClickCategory
                     )
                 } else {
                     Text(category ?: author, style = MaterialTheme.typography.caption)
@@ -100,18 +99,3 @@ fun TorrentCard(
     }
 }
 
-@Preview
-@Composable
-fun TorrentCardPreview() {
-    TorrentCard(
-        title = "Torrent name",
-        updated = Date(),
-        author = "author",
-        category = "category",
-        formattedSize = "5GB",
-        seeds = 6,
-        leeches = 8,
-        isFavorite = true
-    ) {
-    }
-}

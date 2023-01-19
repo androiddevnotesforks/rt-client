@@ -14,7 +14,7 @@ class TorrentSearchResultPagingSource(
     private val query: String,
     private val sort: Sort,
     private val order: Order,
-    private val feed: String?
+    private val feeds: List<String>?
 ) : PagingSource<Int, TorrentSearchResult>() {
     override fun getRefreshKey(state: PagingState<Int, TorrentSearchResult>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -33,7 +33,7 @@ class TorrentSearchResultPagingSource(
                 query = query,
                 sort = sort,
                 order = order,
-                feed = feed,
+                feeds = feeds,
                 startIndex = startIndex,
                 endIndex = endIndex
             )

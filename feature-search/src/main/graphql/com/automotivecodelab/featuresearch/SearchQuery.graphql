@@ -2,7 +2,7 @@ query SearchQuery(
     $query: String!,
     $sort: String!,
     $order: String!,
-    $feed: String,
+    $feeds: [String!],
     $startIndex: Int!,
     $endIndex: Int!
 ) {
@@ -10,7 +10,7 @@ query SearchQuery(
         query: $query,
         sort: $sort,
         order: $order,
-        feed: $feed,
+        feeds: $feeds,
         startIndex:
         $startIndex,
         endIndex: $endIndex
