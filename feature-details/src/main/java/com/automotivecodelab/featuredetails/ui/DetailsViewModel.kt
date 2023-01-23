@@ -1,5 +1,6 @@
 package com.automotivecodelab.featuredetails.ui
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +10,8 @@ import com.automotivecodelab.coreui.ui.Event
 import com.automotivecodelab.featuredetails.di.TorrentDetailsDiConstants
 import com.automotivecodelab.featuredetails.domain.GetMagnetLinkUseCase
 import com.automotivecodelab.featuredetails.domain.GetTorrentDescriptionUseCase
-import com.automotivecodelab.featuredetails.domain.GetTorrentFileUseCase
+import com.automotivecodelab.featuredetails.domain.DownloadTorrentFileUseCase
+import com.automotivecodelab.featuredetails.domain.GetUriForTorrentFileUseCase
 import com.automotivecodelab.featurefavoritesapi.AddToFavoriteUseCase
 import com.automotivecodelab.featurefavoritesapi.DeleteFromFavoritesUseCase
 import com.automotivecodelab.featurefavoritesapi.Favorite
@@ -31,10 +33,11 @@ class DetailsViewModel @AssistedInject constructor(
     @Assisted(TorrentDetailsDiConstants.URL) private val url: String,
     private val getTorrentDescriptionUseCase: GetTorrentDescriptionUseCase,
     private val getMagnetLinkUseCase: GetMagnetLinkUseCase,
-    private val getTorrentFileUseCase: GetTorrentFileUseCase,
+    private val downloadTorrentFileUseCase: DownloadTorrentFileUseCase,
     observeFavoritesUseCase: ObserveFavoritesUseCase,
     private val addToFavoriteUseCase: AddToFavoriteUseCase,
     private val deleteFromFavoritesUseCase: DeleteFromFavoritesUseCase,
+    private val getUriForTorrentFileUseCase: GetUriForTorrentFileUseCase
 ) : ViewModel() {
 
     var isDetailsLoading by mutableStateOf(false)
@@ -43,12 +46,24 @@ class DetailsViewModel @AssistedInject constructor(
     var torrentDescription by mutableStateOf<TorrentDescriptionUIModel?>(null)
         private set
 
-    var isFavorite: StateFlow<Boolean>? = null
+    val isFavorite: StateFlow<Boolean> = observeFavoritesUseCase()
+        .map { favorites ->
+            favorites.any { favorite ->
+                favorite.torrentId == torrentId
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     var magnetLinkEvent by mutableStateOf<Event<String>?>(null)
         private set
 
+    var openTorrentFileEvent by mutableStateOf<Event<Uri>?>(null)
+        private set
+
     var isMagnetLinkLoading by mutableStateOf(false)
+        private set
+
+    var isTorrentFileOpening by mutableStateOf(false)
         private set
 
     var requestFilesystemPermissionEvent by mutableStateOf<Event<Unit>?>(null)
@@ -57,16 +72,12 @@ class DetailsViewModel @AssistedInject constructor(
     var error by mutableStateOf<Event<Throwable>?>(null)
         private set
 
+    var defaultAction by mutableStateOf(TorrentAction.OPEN)
+        private set
+
     private var toggleFavoriteJob: Job? = null
 
     init {
-        isFavorite = observeFavoritesUseCase()
-            .map { favorites ->
-                favorites.any { favorite ->
-                    favorite.torrentId == torrentId
-                }
-            }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
         viewModelScope.launch {
             isDetailsLoading = true
             getTorrentDescriptionUseCase(torrentId)
@@ -104,6 +115,7 @@ class DetailsViewModel @AssistedInject constructor(
     }
 
     fun getMagnetLink(torrentId: String) {
+        if (isMagnetLinkLoading) return
         viewModelScope.launch {
             isMagnetLinkLoading = true
             getMagnetLinkUseCase(torrentId)
@@ -113,8 +125,8 @@ class DetailsViewModel @AssistedInject constructor(
         }
     }
 
-    fun getTorrentFile(torrentId: String, title: String) {
-        getTorrentFileUseCase(torrentId, title)
+    fun downloadTorrentFile(torrentId: String, title: String) {
+        downloadTorrentFileUseCase(torrentId, title)
             .onFailure { t ->
                 when (t) {
                     is SecurityException -> {
@@ -124,13 +136,22 @@ class DetailsViewModel @AssistedInject constructor(
             }
     }
 
+    fun openTorrentFile(torrentId: String) {
+        if (isTorrentFileOpening) return
+        viewModelScope.launch {
+            isTorrentFileOpening = true
+            getUriForTorrentFileUseCase(torrentId)
+                .onFailure { error = Event(it) }
+                .onSuccess { openTorrentFileEvent = Event(it) }
+            isTorrentFileOpening = false
+        }
+    }
+
     fun toggleFavorite() {
-        val isFavorite = isFavorite?.value
         val torrentDescription = torrentDescription
         val threadId = torrentDescription?.threadId
         val category = torrentDescription?.category
-        if (isFavorite != null &&
-            torrentDescription != null &&
+        if (torrentDescription != null &&
             threadId != null &&
             category != null &&
             toggleFavoriteJob == null
@@ -144,10 +165,18 @@ class DetailsViewModel @AssistedInject constructor(
                     title = torrentDescription.title,
                     url = torrentDescription.url
                 )
-                if (isFavorite) deleteFromFavoritesUseCase(favorite)
+                if (isFavorite.value) deleteFromFavoritesUseCase(favorite)
                 else addToFavoriteUseCase(favorite)
                 toggleFavoriteJob = null
             }
         }
     }
+
+    fun changeDefaultAction(action: TorrentAction) {
+        defaultAction = action
+    }
+}
+
+enum class TorrentAction {
+    OPEN, DOWNLOAD, GET_MAGNET_LINK, SHARE_LINK
 }

@@ -1,5 +1,6 @@
 package com.automotivecodelab.featuredetails.data
 
+import android.net.Uri
 import com.automotivecodelab.common.FeatureScoped
 import com.automotivecodelab.featuredetails.domain.TorrentDetailsRepository
 import com.automotivecodelab.featuredetails.domain.models.TorrentDescription
@@ -22,5 +23,9 @@ class TorrentDetailsRepositoryImpl @Inject constructor(
 
     override fun downloadTorrentFile(torrentId: String, title: String): Result<Unit> {
         return remoteDataSource.downloadTorrentFile(torrentId, title)
+    }
+
+    override suspend fun downloadAndGetUriForTorrentFile(torrentId: String): Result<Uri> {
+        return runCatching { remoteDataSource.downloadAndGetUriForTorrentFile(torrentId) }
     }
 }

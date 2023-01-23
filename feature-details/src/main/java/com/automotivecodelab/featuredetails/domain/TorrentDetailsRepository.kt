@@ -1,5 +1,6 @@
 package com.automotivecodelab.featuredetails.domain
 
+import android.net.Uri
 import com.automotivecodelab.featuredetails.domain.models.TorrentDescription
 
 interface TorrentDetailsRepository {
@@ -7,4 +8,5 @@ interface TorrentDetailsRepository {
         Result<TorrentDescription>
     suspend fun getMagnetLink(torrentId: String): Result<String>
     fun downloadTorrentFile(torrentId: String, title: String): Result<Unit>
+    suspend fun downloadAndGetUriForTorrentFile(torrentId: String): Result<Uri>
 }

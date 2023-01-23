@@ -10,7 +10,10 @@
     <string name="please_update_app">Please update an app</string>
     <string name="state">State</string>
     <string name="author">Author</string>
-    <string name="torrent_file" translatable="false">.torrent</string>
-    <string name="magnet_link" translatable="false">magnet</string>
+    <string name="download_torrent">Download .torrent</string>
+    <string name="magnet_link">Get magnet link</string>
     <string name="open_in_browser">Open in browser</string>
+    <string name="open_torrent">Open .torrent</string>
+    <string name="share_link">Share link</string>
+    <string name="change_default_action">Change default action</string>
 </resources>

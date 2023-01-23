@@ -11,4 +11,9 @@
     <string name="state">Состояние</string>
     <string name="author">Автор</string>
     <string name="open_in_browser">Открыть в браузере</string>
+    <string name="download_torrent">Скачать .torrent</string>
+    <string name="magnet_link">Magnet-ссылка</string>
+    <string name="open_torrent">Открыть .torrent</string>
+    <string name="share_link">Поделиться ссылкой</string>
+    <string name="change_default_action">Изменить действие по умолчанию</string>
 </resources>

@@ -2,7 +2,7 @@ package com.automotivecodelab.featuredetails.domain
 
 import javax.inject.Inject
 
-class GetTorrentFileUseCase @Inject constructor(
+class DownloadTorrentFileUseCase @Inject constructor(
     private val repository: TorrentDetailsRepository
 ) {
     operator fun invoke(torrentId: String, title: String): Result<Unit> {
