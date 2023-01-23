@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistPermissions)
     implementation(libs.timber)
+    implementation(libs.datastore)
     // ===dagger===
     implementation(libs.dagger)
     kapt(libs.daggerKapt)

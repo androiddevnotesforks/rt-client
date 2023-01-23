@@ -2,13 +2,13 @@ package com.automotivecodelab.featuredetails.di
 
 import android.app.DownloadManager
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.apollographql.apollo3.ApolloClient
 import com.automotivecodelab.common.FeatureScoped
-import com.automotivecodelab.featuredetails.data.TorrentDetailsRemoteDataSource
-import com.automotivecodelab.featuredetails.data.TorrentDetailsRemoteDataSourceImpl
-import com.automotivecodelab.featuredetails.data.TorrentDetailsRepositoryImpl
-import com.automotivecodelab.featuredetails.data.TorrentDetailsServerApi
+import com.automotivecodelab.featuredetails.data.*
 import com.automotivecodelab.featuredetails.domain.TorrentDetailsRepository
+import com.automotivecodelab.featuredetails.domain.UserSettingsRepository
 import com.automotivecodelab.featuredetails.ui.DetailsViewModel
 import com.automotivecodelab.featurefavoritesapi.AddToFavoriteUseCase
 import com.automotivecodelab.featurefavoritesapi.DeleteFromFavoritesUseCase
@@ -55,6 +55,11 @@ class DetailsModule {
         fun bindTorrentDetailsRemoteDataSource(
             impl: TorrentDetailsRemoteDataSourceImpl
         ): TorrentDetailsRemoteDataSource
+
+        @Binds
+        fun bindUserSettingsRepository(
+            impl: UserSettingsRepositoryImpl
+        ): UserSettingsRepository
     }
 
     @FeatureScoped
@@ -75,4 +80,5 @@ interface DetailsComponentDeps {
     val observeFavoritesUseCase: ObserveFavoritesUseCase
     val addToFavoritesUseCase: AddToFavoriteUseCase
     val deleteFromFavoritesUseCase: DeleteFromFavoritesUseCase
+    val datastore: DataStore<Preferences>
 }

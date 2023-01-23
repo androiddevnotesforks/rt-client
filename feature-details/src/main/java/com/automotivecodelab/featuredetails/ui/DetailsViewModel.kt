@@ -8,10 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.automotivecodelab.coreui.ui.Event
 import com.automotivecodelab.featuredetails.di.TorrentDetailsDiConstants
-import com.automotivecodelab.featuredetails.domain.GetMagnetLinkUseCase
-import com.automotivecodelab.featuredetails.domain.GetTorrentDescriptionUseCase
-import com.automotivecodelab.featuredetails.domain.DownloadTorrentFileUseCase
-import com.automotivecodelab.featuredetails.domain.GetUriForTorrentFileUseCase
+import com.automotivecodelab.featuredetails.domain.*
+import com.automotivecodelab.featuredetails.domain.models.TorrentAction
 import com.automotivecodelab.featurefavoritesapi.AddToFavoriteUseCase
 import com.automotivecodelab.featurefavoritesapi.DeleteFromFavoritesUseCase
 import com.automotivecodelab.featurefavoritesapi.Favorite
@@ -37,7 +35,9 @@ class DetailsViewModel @AssistedInject constructor(
     observeFavoritesUseCase: ObserveFavoritesUseCase,
     private val addToFavoriteUseCase: AddToFavoriteUseCase,
     private val deleteFromFavoritesUseCase: DeleteFromFavoritesUseCase,
-    private val getUriForTorrentFileUseCase: GetUriForTorrentFileUseCase
+    private val getUriForTorrentFileUseCase: GetUriForTorrentFileUseCase,
+    observeTorrentDefaultActionUseCase: ObserveTorrentDefaultActionUseCase,
+    private val setTorrentDefaultActionUseCase: SetTorrentDefaultActionUseCase
 ) : ViewModel() {
 
     var isDetailsLoading by mutableStateOf(false)
@@ -72,8 +72,8 @@ class DetailsViewModel @AssistedInject constructor(
     var error by mutableStateOf<Event<Throwable>?>(null)
         private set
 
-    var defaultAction by mutableStateOf(TorrentAction.OPEN)
-        private set
+    val defaultAction = observeTorrentDefaultActionUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TorrentAction.OPEN)
 
     private var toggleFavoriteJob: Job? = null
 
@@ -173,10 +173,8 @@ class DetailsViewModel @AssistedInject constructor(
     }
 
     fun changeDefaultAction(action: TorrentAction) {
-        defaultAction = action
+        viewModelScope.launch {
+            setTorrentDefaultActionUseCase(action)
+        }
     }
-}
-
-enum class TorrentAction {
-    OPEN, DOWNLOAD, GET_MAGNET_LINK, SHARE_LINK
 }

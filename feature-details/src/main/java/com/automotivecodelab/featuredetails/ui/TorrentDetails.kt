@@ -35,6 +35,7 @@ import com.automotivecodelab.featuredetails.di.DaggerDetailsComponent
 import com.automotivecodelab.featuredetails.di.DetailsComponentDeps
 import com.automotivecodelab.featuredetails.domain.models.SDUIFontWeight
 import com.automotivecodelab.featuredetails.domain.models.SDUITextModel
+import com.automotivecodelab.featuredetails.domain.models.TorrentAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.CoroutineScope
@@ -255,7 +256,7 @@ fun TorrentDetails(
                             horizontalArrangement = Arrangement.spacedBy(DefaultPadding),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            val defaultAction = viewModel.defaultAction
+                            val defaultAction by viewModel.defaultAction.collectAsState()
                             val shareLink = {
                                 val sendIntent = Intent().apply {
                                     action = Intent.ACTION_SEND
@@ -470,10 +471,8 @@ fun ChangeDefaultActionDialog(
         confirmButton = {  },
         containerColor = MaterialTheme.colors.surface,
         text = {
-            Column(
-                //verticalArrangement = Arrangement.spacedBy(DefaultPadding)
-            ) {
-                val defaultAction = viewModel.defaultAction
+            Column {
+                val defaultAction by viewModel.defaultAction.collectAsState()
                 TorrentAction.values().forEach { action ->
                     val title = when (action) {
                         TorrentAction.OPEN -> R.string.open_torrent
