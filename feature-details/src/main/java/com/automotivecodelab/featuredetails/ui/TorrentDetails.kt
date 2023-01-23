@@ -126,12 +126,21 @@ fun TorrentDetails(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     } else {
+        // when system bottom sheet appears - e.g. sharing, opening torrent file - status bar
+        // disappears. It makes all the content of details screen move upper and it looks not good
+        // (when spacer have the .windowInsetsTopHeight(WindowInsets.statusBars) modifier).
+        // Noticed on samsung One UI - maybe for other vendors this behavior is the same. So this is
+        // small workaround for that:
+        val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val statusBarHeightRemembered = remember {
+            statusBarHeight
+        }
         LazyColumn(
             modifier = Modifier.padding(horizontal = DefaultPadding),
             verticalArrangement = Arrangement.spacedBy(DefaultPadding),
             content = {
                 item {
-                    Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+                    Spacer(modifier = Modifier.height(statusBarHeightRemembered))
                 }
                 val torrentDescription = viewModel.torrentDescription
                 if (torrentDescription != null) {
