@@ -130,17 +130,19 @@ fun TorrentDetails(
         // disappears. It makes all the content of details screen move upper and it looks not good
         // (when spacer have the .windowInsetsTopHeight(WindowInsets.statusBars) modifier).
         // Noticed on samsung One UI - maybe for other vendors this behavior is the same. So this is
-        // small workaround for that:
+        // a small workaround for that:
         val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-        val statusBarHeightRemembered = remember {
-            statusBarHeight
+        // rememberSaveable for handling rotation. In case of using remember {} there is zero value
+        // in statusBarHeight after rotate device
+        val statusBarHeightRemembered = rememberSaveable {
+            statusBarHeight.value
         }
         LazyColumn(
             modifier = Modifier.padding(horizontal = DefaultPadding),
             verticalArrangement = Arrangement.spacedBy(DefaultPadding),
             content = {
                 item {
-                    Spacer(modifier = Modifier.height(statusBarHeightRemembered))
+                    Spacer(modifier = Modifier.height(statusBarHeightRemembered.dp))
                 }
                 val torrentDescription = viewModel.torrentDescription
                 if (torrentDescription != null) {
