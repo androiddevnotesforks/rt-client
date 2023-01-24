@@ -48,6 +48,7 @@ accompanistNavigationAnimation = { module = "com.google.accompanist:accompanist-
 leakCanary = "com.squareup.leakcanary:leakcanary-android:2.9.1"
 accompanistPermissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 accompanistNavigation = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist"}
+splashScreenApi = "androidx.core:core-splashscreen:1.0.0-beta02"
 
 [bundles]
 android = ["androidCore", "appcompat", "lifecycle", "material", "viewmodel"]

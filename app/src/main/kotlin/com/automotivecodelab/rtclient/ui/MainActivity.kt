@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.automotivecodelab.coreui.ui.Event
 import com.automotivecodelab.rtclient.MyFirebaseMessagingService
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
         DelicateCoroutinesApi::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_RTClient)
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {

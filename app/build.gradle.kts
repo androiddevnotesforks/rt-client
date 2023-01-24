@@ -51,6 +51,7 @@ dependencies {
     apolloMetadata(projects.coreNetwork)
     implementation(libs.coil)
     debugImplementation(libs.leakCanary)
+    implementation(libs.splashScreenApi)
 
     // ===modules===
     implementation(projects.featureRssFeeds)
